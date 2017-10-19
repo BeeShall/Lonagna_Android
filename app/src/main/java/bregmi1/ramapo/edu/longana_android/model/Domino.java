@@ -20,6 +20,14 @@ public class Domino {
         this.doubleDomino = (pip1 == pip2);
     }
 
+    public int getPip1() {
+        return pip1;
+    }
+
+    public int getPip2() {
+        return pip2;
+    }
+
     public void flip(){
         int temp = pip1;
         pip1 = pip2;
