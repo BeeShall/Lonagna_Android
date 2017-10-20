@@ -28,10 +28,11 @@ public class Domino {
         return pip2;
     }
 
-    public void flip(){
+    public Domino flip(){
         int temp = pip1;
         pip1 = pip2;
         pip2 = pip1;
+        return  this;
     }
 
     public int getSum(){
@@ -40,6 +41,10 @@ public class Domino {
 
     public boolean equals(Domino domino) {
         return ((pip1 == domino.pip1) &&  (pip2 == domino.pip2)) || ((pip1 == domino.pip2) &&  (pip2 == domino.pip1));
+    }
+
+    public String toString(){
+        return new StringBuilder().append(pip1).append("-").append(pip2).toString();
     }
 
 }

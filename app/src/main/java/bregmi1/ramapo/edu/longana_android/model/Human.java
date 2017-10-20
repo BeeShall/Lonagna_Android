@@ -5,4 +5,7 @@ package bregmi1.ramapo.edu.longana_android.model;
  */
 
 public class Human extends Player {
+    public Human(){
+        side = Side.LEFT;
+    }
 }

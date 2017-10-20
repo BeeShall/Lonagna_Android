@@ -20,9 +20,34 @@ public class Hand {
         return false;
     }
 
+    public int getDominoIndex(Domino domino){
+        for(int i=0; i<hand.size(); i++){
+            if(hand.get(i).equals(domino)) return i;
+        }
+        return -1;
+    }
+
+    public Domino getDomino(int index){
+        return hand.elementAt(index);
+    }
+
     public void playDomino(Domino domino){
         hand.remove(domino);
     }
+
+    public void playDomino(int index){
+        hand.removeElementAt(index);
+    }
+
+    public void add(Domino domino){
+        hand.add(domino);
+    }
+
+    public boolean isEmpty(){
+        return hand.isEmpty();
+    }
+
+
 
     public int getHandSum(){
         int total = 0;

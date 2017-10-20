@@ -5,4 +5,7 @@ package bregmi1.ramapo.edu.longana_android.model;
  */
 
 public class Computer extends Player {
+    public Computer(){
+        side = Side.RIGHT;
+    }
 }

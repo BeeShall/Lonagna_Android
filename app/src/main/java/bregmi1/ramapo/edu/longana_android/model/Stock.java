@@ -18,9 +18,10 @@ public class Stock {
         stock = new Vector<>();
     }
 
-    public Stock(int MAX_PIP){
-        for(int i=0; i<=MAX_PIP; i++){
-            for(int j=i; j<=MAX_PIP; j++){
+    public Stock(int maxPip){
+        stock = new Vector<>();
+        for(int i=0; i<=maxPip; i++){
+            for(int j=i; j<=maxPip; j++){
                 stock.add(new Domino(i,j));
             }
         }

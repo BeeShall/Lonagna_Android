@@ -10,18 +10,26 @@ import java.util.Vector;
 public class Layout {
     private Vector<Domino> left;
     private Domino engine;
+    private boolean engineSet;
     private Vector<Domino> right;
 
     public Layout() {
-        left = new Vector();
-        right = new Vector<>();
-        engine = null;
+        this(null);
     }
 
     public Layout(Domino engine){
         this.engine = engine;
+        engineSet = false;
         left = new Vector();
         right = new Vector<>();
+    }
+
+    public Domino getEngine(){
+        return this.engine;
+    }
+
+    public void setEngine(){
+        engineSet = true;
     }
 
 
@@ -43,31 +51,30 @@ public class Layout {
         else return true;
     }
 
-    public boolean placeDomino(Domino domino, Side side){
-        if(engine==null) return false;
+    public String placeDomino(Domino domino, Side side){
+
+        if(!engineSet) return "Engine has not been set yet!";
         Domino validatedDomino = checkIfDominoCanBePlaced(domino,side);
-        if(validatedDomino == null) return false;
+        if(validatedDomino == null) return "Invalid move!";
         if(side == Side.LEFT) left.add(domino);
         else if(side == Side.RIGHT) right.add(domino);
-        return true;
+        return null;
     }
 
     private Domino checkIfDominoCanBePlaced(Domino domino, Side side){
-        if(engine == null) return null;
+        if(!engineSet) return null;
         if(side == Side.LEFT){
             int leftDominoPip = (left.isEmpty()) ? engine.getPip1() : left.lastElement().getPip1();
             if(leftDominoPip == domino.getPip2()) return domino;
             else if(leftDominoPip == domino.getPip1()) {
-                domino.flip();
-                return domino;
+                return domino.flip();
             }
         }
         else if(side == Side.RIGHT){
             int rightDominoPip = (right.isEmpty())? engine.getPip1() : right.lastElement().getPip2();
             if(rightDominoPip == domino.getPip1()) return domino;
             else if(rightDominoPip == domino.getPip2()) {
-                domino.flip();
-                return domino;
+                return domino.flip();
             }
         }
         else return null;
