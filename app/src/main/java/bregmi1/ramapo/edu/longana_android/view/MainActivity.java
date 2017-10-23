@@ -3,9 +3,11 @@ package bregmi1.ramapo.edu.longana_android.view;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
 
 import bregmi1.ramapo.edu.longana_android.R;
 import bregmi1.ramapo.edu.longana_android.model.Computer;
+import bregmi1.ramapo.edu.longana_android.model.Domino;
 import bregmi1.ramapo.edu.longana_android.model.Human;
 import bregmi1.ramapo.edu.longana_android.model.Round;
 
@@ -25,7 +27,13 @@ public class MainActivity extends AppCompatActivity {
         messages.setMessage(round.determineFirstPlayer());
         messages.show();
 
+    }
 
+    private Button getDominoButton(Domino domino) {
+        Button button = new Button(this);
+        button.setEnabled(false);
+        button.setText(domino.toString());
+        return button;
 
     }
 }
