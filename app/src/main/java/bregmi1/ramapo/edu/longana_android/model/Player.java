@@ -33,6 +33,10 @@ public class Player {
         this.score = score;
     }
 
+    public Vector<Domino> getHand() {
+        return hand.getHand();
+    }
+
     public void setHand(Hand hand) {
         this.hand = hand;
     }
@@ -85,7 +89,7 @@ public class Player {
         Move returnMove = possibleMoves.firstElement();
         hintStrat.append("This domino decreases the total sum on the hand by ");
         hintStrat.append(+returnMove.getDomino().getSum());
-        hintStrat.append("/n");
+        hintStrat.append("\n");
 
         //However, if the domino can be placed on either side (passed or double)
         if (returnMove.getSide() == Side.ANY) {
@@ -99,19 +103,19 @@ public class Player {
                 hintStrat.append(leftPlacementScore);
                 hintStrat.append(" rather than placing on the RIGHT which would decrease by ");
                 hintStrat.append(rightPlacementScore);
-                hintStrat.append("/n");
+                hintStrat.append("\n");
                 returnMove.setSide(Side.LEFT);
             } else if (rightPlacementScore > leftPlacementScore) {
                 hintStrat.append("If placed on RIGHT, the next best domino decreases the total sum on the hand by ");
                 hintStrat.append(rightPlacementScore);
                 hintStrat.append(" rather than placing on the LEFT which would decrease by ");
                 hintStrat.append(leftPlacementScore);
-                hintStrat.append("/n");
+                hintStrat.append("\n");
                 returnMove.setSide(Side.RIGHT);
             } else {
                 hintStrat.append("This domino will decreases the total sum on the hand by ");
                 hintStrat.append(leftPlacementScore);
-                hintStrat.append(" either way, So placing it on the otherSide would create more chances of screwing the opponent over!/n");
+                hintStrat.append(" either way, So placing it on the otherSide would create more chances of screwing the opponent over!\n");
                 returnMove.setSide(otherSide);
             }
         }

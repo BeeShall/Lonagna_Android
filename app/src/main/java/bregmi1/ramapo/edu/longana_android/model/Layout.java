@@ -32,6 +32,15 @@ public class Layout {
         engineSet = true;
     }
 
+    public Vector<Domino> getLayout() {
+        Vector<Domino> layout = new Vector<>();
+        if (!engineSet) return layout;
+        layout.addAll(left);
+        layout.add(engine);
+        layout.addAll(right);
+        return (Vector<Domino>) layout.clone();
+    }
+
 
     public void setLayout(Vector<Domino> dominoes){
         if(dominoes.isEmpty()) return;

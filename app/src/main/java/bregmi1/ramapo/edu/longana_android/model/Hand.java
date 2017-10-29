@@ -27,6 +27,10 @@ public class Hand {
         return -1;
     }
 
+    public Vector<Domino> getHand() {
+        return (Vector<Domino>) hand.clone();
+    }
+
     public Domino getDomino(int index){
         return hand.elementAt(index);
     }

@@ -2,6 +2,8 @@ package bregmi1.ramapo.edu.longana_android.model;
 
 import android.util.Log;
 
+import java.util.Vector;
+
 /**
  * Created by beeshall on 10/17/17.
  */
@@ -28,6 +30,14 @@ public class Round {
         passCount = 0;
         playerPassed = false;
         roundEnded = false;
+    }
+
+    public Vector<Domino> getLayout() {
+        return layout.getLayout();
+    }
+
+    public Vector<Domino> getStock() {
+        return stock.getStock();
     }
 
     public boolean getRoundEnded(){
@@ -82,14 +92,14 @@ public class Round {
         String message = human.play(human.hasDominoInHand(domino),layout,side, playerPassed);
         if(message != null) return message;
         if(hasRoundEnded()) return null;
-        //computerMove
+        message = playComputerMove();
+
         if(hasRoundEnded()) return null;
         return "";
     }
 
     private String playComputerMove(){
-
-        return "";
+        return computer.play(layout, playerPassed);
     }
 
     private boolean hasRoundEnded(){

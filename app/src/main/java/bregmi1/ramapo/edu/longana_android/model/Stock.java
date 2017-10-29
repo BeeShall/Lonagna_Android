@@ -11,8 +11,8 @@ import java.util.Vector;
 
 
 public class Stock {
-    private Vector<Domino> stock;
     final int HAND_SIZE = 8;
+    private Vector<Domino> stock;
 
     public Stock(){
         stock = new Vector<>();
@@ -25,6 +25,10 @@ public class Stock {
                 stock.add(new Domino(i,j));
             }
         }
+    }
+
+    public Vector<Domino> getStock() {
+        return (Vector<Domino>) stock.clone();
     }
 
     public void shuffleStock(){
