@@ -74,13 +74,16 @@ public class Round {
         if((dominoIndex = human.hasDominoInHand(engine)) >= 0){
             Log.v("Round: ", "Human has the engine!");
             displayLog.append("Human has the Engine! \n");
-            human.play(dominoIndex,layout,Side.ANY, playerPassed);
+            human.playDomino(dominoIndex, layout, Side.ANY);
+            displayLog.append("Human placed the engine! \n \n Computer's move: \n");
+            displayLog.append(playComputerMove());
             return true;
         }
         else if((dominoIndex =computer.hasDominoInHand(engine)) >= 0){
             Log.v("Round: ", "Computer has the engine!");
             displayLog.append("Computer has the Engine! \n");
-            computer.play(dominoIndex,layout,Side.ANY, playerPassed);
+            computer.playDomino(dominoIndex, layout, Side.ANY);
+            displayLog.append("It's human's turn!");
             return true;
         }
         return false;
@@ -89,17 +92,32 @@ public class Round {
 
     public String play( Domino domino, Side side){
         //humanMove
-        String message = human.play(human.hasDominoInHand(domino),layout,side, playerPassed);
-        if(message != null) return message;
+        if (!human.play(human.hasDominoInHand(domino), layout, side, playerPassed))
+            return "Invalid move!";
         if(hasRoundEnded()) return null;
-        message = playComputerMove();
-
-        if(hasRoundEnded()) return null;
-        return "";
+        return playComputerMove();
+        //return null;
     }
 
+
     private String playComputerMove(){
-        return computer.play(layout, playerPassed);
+        if (!computer.play(layout, playerPassed)) {
+            StringBuilder compMove = new StringBuilder();
+            Log.v("Computer Move: ", "doesn't have any move in hand");
+            compMove.append("Computer doesn't have any valid moves in hand! \n");
+            Domino drawnDomino = stock.drawDomino();
+            compMove.append("Computer drew ").append(drawnDomino.toString()).append(" from the stock \n");
+            computer.drawDomino(drawnDomino);
+            if (!computer.play(layout, playerPassed)) {
+                Log.v("Computer move: ", "Computer drew from stock but still no move");
+                compMove.append("Computer still doesn't have a move to play.\n So, Computer passed!");
+                //playerPassed = true;
+                return compMove.toString();
+            }
+            return compMove.append(computer.getMoveStrategy()).toString();
+
+        }
+        return computer.getMoveStrategy();
     }
 
     private boolean hasRoundEnded(){

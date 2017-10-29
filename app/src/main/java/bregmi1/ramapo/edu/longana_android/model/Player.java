@@ -1,5 +1,7 @@
 package bregmi1.ramapo.edu.longana_android.model;
 
+import android.util.Log;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
@@ -57,16 +59,27 @@ public class Player {
         return hand.getDominoIndex(domino);
     }
 
-    public String play(int dominoIndex, Layout layout, Side side, boolean playerPassed ){
+    public boolean playDomino(int dominoIndex, Layout layout, Side side) {
         Domino domino = hand.getDomino(dominoIndex);
-        if(domino.equals(layout.getEngine())) layout.setEngine();
-        else{
-            if(side != this.side) return "Invalid Side!";
-            String message = "";
-            if((message = layout.placeDomino(domino,side)) != null) return message;
+        if (domino.equals(layout.getEngine())) {
+            layout.setEngine();
+            hand.playDomino(dominoIndex);
+            return true;
         }
-        hand.playDomino(dominoIndex);
-        return null;
+        if (layout.placeDomino(domino, side)) {
+            hand.playDomino(dominoIndex);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean play(int dominoIndex, Layout layout, Side side, boolean playerPassed) {
+        Domino domino = hand.getDomino(dominoIndex);
+        if (layout.isEngineSet()) {
+            if (side == otherSide && (!domino.isDouble() || !playerPassed)) return false;
+            return playDomino(dominoIndex, layout, side);
+        }
+        return false;
     }
 
     protected Move hint(Layout layout, boolean playerPassed) {
@@ -81,15 +94,17 @@ public class Player {
         Collections.sort(possibleMoves, new Comparator<Move>() {
             @Override
             public int compare(Move o1, Move o2) {
-                return o1.getDomino().getSum() - o2.getDomino().getSum();
+                return o2.getDomino().getSum() - o1.getDomino().getSum();
             }
         });
 
+        for (Move v : possibleMoves) {
+            Log.v("possibleDomino", v.getDomino().toString());
+        }
+
         //the domino with the highest sum is the best play
         Move returnMove = possibleMoves.firstElement();
-        hintStrat.append("This domino decreases the total sum on the hand by ");
-        hintStrat.append(+returnMove.getDomino().getSum());
-        hintStrat.append("\n");
+        hintStrat.append(returnMove.getDomino().toString()).append(" decreases the total sum on the hand by ").append(returnMove.getDomino().getSum()).append("\n");
 
         //However, if the domino can be placed on either side (passed or double)
         if (returnMove.getSide() == Side.ANY) {
@@ -99,22 +114,15 @@ public class Player {
             int rightPlacementScore = getBestScoreforNextMove(layout, new Move(returnMove.getDomino(), Side.RIGHT));
 
             if (leftPlacementScore > rightPlacementScore) {
-                hintStrat.append("If placed on LEFT, the next best domino decreases the total sum on the hand by ");
-                hintStrat.append(leftPlacementScore);
-                hintStrat.append(" rather than placing on the RIGHT which would decrease by ");
-                hintStrat.append(rightPlacementScore);
-                hintStrat.append("\n");
+                hintStrat.append("If placed on LEFT, the next best domino decreases the total sum on the hand by ").append(leftPlacementScore);
+                hintStrat.append(" rather than placing on the RIGHT which would decrease by ").append(rightPlacementScore).append("\n");
                 returnMove.setSide(Side.LEFT);
             } else if (rightPlacementScore > leftPlacementScore) {
-                hintStrat.append("If placed on RIGHT, the next best domino decreases the total sum on the hand by ");
-                hintStrat.append(rightPlacementScore);
-                hintStrat.append(" rather than placing on the LEFT which would decrease by ");
-                hintStrat.append(leftPlacementScore);
-                hintStrat.append("\n");
+                hintStrat.append("If placed on RIGHT, the next best domino decreases the total sum on the hand by ").append(rightPlacementScore);
+                hintStrat.append(" rather than placing on the LEFT which would decrease by ").append(leftPlacementScore).append("\n");
                 returnMove.setSide(Side.RIGHT);
             } else {
-                hintStrat.append("This domino will decreases the total sum on the hand by ");
-                hintStrat.append(leftPlacementScore);
+                hintStrat.append("This domino will decreases the total sum on the hand by ").append(leftPlacementScore);
                 hintStrat.append(" either way, So placing it on the otherSide would create more chances of screwing the opponent over!\n");
                 returnMove.setSide(otherSide);
             }

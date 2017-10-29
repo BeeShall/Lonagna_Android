@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.Toast;
 
 import java.util.Vector;
 
@@ -87,15 +88,13 @@ public class MainActivity extends AppCompatActivity {
                             .setPositiveButton("RIGHT", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    round.play(domino, Side.RIGHT);
-                                    refreshLayout();
+                                    playRound(domino, Side.RIGHT);
                                 }
                             })
                             .setNegativeButton("LEFT", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    round.play(domino, Side.LEFT);
-                                    refreshLayout();
+                                    playRound(domino, Side.LEFT);
                                 }
                             });
                     sideSelector.show();
@@ -108,4 +107,15 @@ public class MainActivity extends AppCompatActivity {
         return button;
 
     }
+
+    private void playRound(Domino domino, Side side) {
+        String message = round.play(domino, side);
+        if (message != null) {
+            Toast toast = Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG);
+            toast.show();
+        }
+        refreshLayout();
+    }
 }
+
+

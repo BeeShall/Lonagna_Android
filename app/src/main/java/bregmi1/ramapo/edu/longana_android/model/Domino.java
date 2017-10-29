@@ -35,7 +35,7 @@ public class Domino {
     public Domino flip(){
         int temp = pip1;
         pip1 = pip2;
-        pip2 = pip1;
+        pip2 = temp;
         return  this;
     }
 

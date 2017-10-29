@@ -14,8 +14,17 @@ public class Computer extends Player {
         return this.hintStrategy;
     }
 
-    public String play(Layout layout, boolean playerPassed) {
+    @Override
+    public boolean play(int dominoIndex, Layout layout, Side side, boolean playerPassed) {
+        return super.play(dominoIndex, layout, side, playerPassed);
+    }
+
+    public boolean play(Layout layout, boolean playerPassed) {
         Move hintMove = hint(layout, playerPassed);
+        if (hintMove == null) {
+            return false;
+        }
+        hintStrategy = new StringBuilder(hintStrategy).append("\n Therefore, Computer played ").append(hintMove.getDomino().toString()).append(" to the ").append(hintMove.getSide().toString()).toString();
         return super.play(hand.getDominoIndex(hintMove.getDomino()), layout, hintMove.getSide(), playerPassed);
     }
 }

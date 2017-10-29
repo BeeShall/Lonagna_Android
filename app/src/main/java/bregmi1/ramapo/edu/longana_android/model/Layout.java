@@ -32,10 +32,15 @@ public class Layout {
         engineSet = true;
     }
 
+    public boolean isEngineSet() {
+        return engineSet;
+    }
+
     public Vector<Domino> getLayout() {
         Vector<Domino> layout = new Vector<>();
         if (!engineSet) return layout;
         layout.addAll(left);
+        Collections.reverse(layout);
         layout.add(engine);
         layout.addAll(right);
         return (Vector<Domino>) layout.clone();
@@ -65,14 +70,14 @@ public class Layout {
         return checkIfDominoCanBePlaced(domino, side) != null;
     }
 
-    public String placeDomino(Domino domino, Side side){
+    public boolean placeDomino(Domino domino, Side side) {
 
-        if(!engineSet) return "Engine has not been set yet!";
+        if (!engineSet) return false;
         Domino validatedDomino = checkIfDominoCanBePlaced(domino,side);
-        if(validatedDomino == null) return "Invalid move!";
+        if (validatedDomino == null) return false;
         if(side == Side.LEFT) left.add(domino);
         else if(side == Side.RIGHT) right.add(domino);
-        return null;
+        return true;
     }
 
     public void undo(Side side) {
