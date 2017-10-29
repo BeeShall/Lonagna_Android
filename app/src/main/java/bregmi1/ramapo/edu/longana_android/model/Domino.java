@@ -28,6 +28,10 @@ public class Domino {
         return pip2;
     }
 
+    public boolean isDouble() {
+        return this.doubleDomino;
+    }
+
     public Domino flip(){
         int temp = pip1;
         pip1 = pip2;

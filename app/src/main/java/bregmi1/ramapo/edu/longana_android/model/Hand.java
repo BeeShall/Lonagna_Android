@@ -43,6 +43,10 @@ public class Hand {
         hand.add(domino);
     }
 
+    public int getHandSize() {
+        return hand.size();
+    }
+
     public boolean isEmpty(){
         return hand.isEmpty();
     }

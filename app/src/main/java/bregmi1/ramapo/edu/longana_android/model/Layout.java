@@ -51,6 +51,11 @@ public class Layout {
         else return true;
     }
 
+    public boolean isMoveValid(Domino domino, Side side) {
+        if (!engineSet) return false;
+        return checkIfDominoCanBePlaced(domino, side) != null;
+    }
+
     public String placeDomino(Domino domino, Side side){
 
         if(!engineSet) return "Engine has not been set yet!";
@@ -59,6 +64,11 @@ public class Layout {
         if(side == Side.LEFT) left.add(domino);
         else if(side == Side.RIGHT) right.add(domino);
         return null;
+    }
+
+    public void undo(Side side) {
+        if (side == Side.LEFT) left.removeElementAt(left.size() - 1);
+        if (side == Side.RIGHT) right.removeElementAt(right.size() - 1);
     }
 
     private Domino checkIfDominoCanBePlaced(Domino domino, Side side){
