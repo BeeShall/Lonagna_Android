@@ -10,6 +10,10 @@ public class Computer extends Player {
         otherSide = Side.LEFT;
     }
 
+    public String getMoveStrategy() {
+        return this.hintStrategy;
+    }
+
     public String play(Layout layout, boolean playerPassed) {
         Move hintMove = hint(layout, playerPassed);
         return super.play(hand.getDominoIndex(hintMove.getDomino()), layout, hintMove.getSide(), playerPassed);

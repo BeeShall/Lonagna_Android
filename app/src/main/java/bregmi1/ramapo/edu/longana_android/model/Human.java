@@ -14,6 +14,10 @@ public class Human extends Player {
         return hint(layout, playerPassed);
     }
 
+    public String getHintStrategy() {
+        return this.hintStrategy;
+    }
+
     public String play(int dominoIndex, Layout layout, Side side, boolean playerPassed) {
         return super.play(dominoIndex, layout, side, playerPassed);
     }

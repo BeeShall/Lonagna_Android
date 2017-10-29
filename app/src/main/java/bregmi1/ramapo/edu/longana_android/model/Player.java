@@ -22,6 +22,7 @@ public class Player {
     public Player(int score, Hand hand){
         this.score=score;
         this.hand=hand;
+        this.hintStrategy = new String("");
     }
 
     public int getScore() {
