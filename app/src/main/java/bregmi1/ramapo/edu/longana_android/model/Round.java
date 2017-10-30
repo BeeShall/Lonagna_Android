@@ -18,6 +18,8 @@ public class Round {
     private int passCount;
     private boolean roundEnded;
 
+    private boolean computerTurn;
+
     public Round(){
         this(null,null, -1);
     }
@@ -65,6 +67,8 @@ public class Round {
             Log.v("Round: ","Computer drew"+domino.toString());
             displayLog.append("Computer drew ").append(domino.toString()).append("\n");
         }
+        human.unsetDominoDrawn();
+        computer.unsetDominoDrawn();
         layout.setEngine();
         return displayLog.toString();
     }
@@ -75,8 +79,8 @@ public class Round {
             Log.v("Round: ", "Human has the engine!");
             displayLog.append("Human has the Engine! \n");
             human.playDomino(dominoIndex, layout, Side.ANY);
-            displayLog.append("Human placed the engine! \n \n Computer's move: \n");
-            displayLog.append(playComputerMove());
+            displayLog.append("Human placed the engine! \n");
+            computerTurn = true;
             return true;
         }
         else if((dominoIndex =computer.hasDominoInHand(engine)) >= 0){
@@ -84,9 +88,18 @@ public class Round {
             displayLog.append("Computer has the Engine! \n");
             computer.playDomino(dominoIndex, layout, Side.ANY);
             displayLog.append("It's human's turn!");
+            computerTurn = false;
             return true;
         }
         return false;
+    }
+
+    public String normalizeTurn() {
+        if (computerTurn) {
+            computerTurn = false;
+            return playComputerMove();
+        }
+        return null;
     }
 
 
@@ -94,29 +107,67 @@ public class Round {
         //humanMove
         if (!human.play(human.hasDominoInHand(domino), layout, side, playerPassed))
             return "Invalid move!";
-        if(hasRoundEnded()) return null;
-        return playComputerMove();
+        playerPassed = false;
+        human.unsetDominoDrawn();
+        computerTurn = true;
+        return null;
         //return null;
+    }
+
+    public boolean playerPass(Player player) {
+        if (player.hasValidMove(layout, playerPassed)) return false;
+        if (!player.hasAlreadyDrawn()) return false;
+        player.unsetDominoDrawn();
+        playerPassed = true;
+        computerTurn = true;
+        return true;
+    }
+
+    public Domino playerDraw(Player player) {
+        if (player.hasValidMove(layout, playerPassed)) return null;
+        if (player.hasAlreadyDrawn()) return null;
+        Log.v("Player drew", "" + player.hasAlreadyDrawn());
+        if (stock.isEmpty()) return null;
+        Domino domino = stock.drawDomino();
+        player.drawDomino(domino);
+        return domino;
+    }
+
+    public String getHint() {
+        Move hint = human.getHint(layout, playerPassed);
+        if (hint == null) return null;
+        else
+            return new StringBuilder().append(human.getHint(layout, playerPassed).toString()).append("\nHint Strategy: \n").append(human.getHintStrategy()).toString();
+
     }
 
 
     private String playComputerMove(){
         if (!computer.play(layout, playerPassed)) {
             StringBuilder compMove = new StringBuilder();
-            Log.v("Computer Move: ", "doesn't have any move in hand");
             compMove.append("Computer doesn't have any valid moves in hand! \n");
+
+            if (stock.isEmpty()) {
+                compMove.append("Stock is empty! So, computer passed!");
+                playerPassed = true;
+                return compMove.toString();
+            }
+
+
             Domino drawnDomino = stock.drawDomino();
             compMove.append("Computer drew ").append(drawnDomino.toString()).append(" from the stock \n");
             computer.drawDomino(drawnDomino);
             if (!computer.play(layout, playerPassed)) {
-                Log.v("Computer move: ", "Computer drew from stock but still no move");
                 compMove.append("Computer still doesn't have a move to play.\n So, Computer passed!");
-                //playerPassed = true;
+                playerPassed = true;
                 return compMove.toString();
             }
+            playerPassed = false;
+            computer.unsetDominoDrawn();
             return compMove.append(computer.getMoveStrategy()).toString();
 
         }
+        playerPassed = false;
         return computer.getMoveStrategy();
     }
 

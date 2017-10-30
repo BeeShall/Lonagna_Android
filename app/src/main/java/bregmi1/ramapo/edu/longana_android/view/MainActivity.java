@@ -1,9 +1,9 @@
 package bregmi1.ramapo.edu.longana_android.view;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
@@ -18,7 +18,7 @@ import bregmi1.ramapo.edu.longana_android.model.Human;
 import bregmi1.ramapo.edu.longana_android.model.Round;
 import bregmi1.ramapo.edu.longana_android.model.Side;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     private Human human;
     private Computer computer;
@@ -33,9 +33,59 @@ public class MainActivity extends AppCompatActivity {
         computer = new Computer();
 
         round = new Round(human, computer, 6);
+
+        Button passButton = (Button) findViewById(R.id.passButton);
+        passButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (round.playerPass(human)) {
+                    normalizePlayTurn();
+                    //normalize the turn
+                    //ask to save
+                } else {
+                    Toast.makeText(MainActivity.this, "You can't pass yet! \nYou might have a valid move in your hand or you might be able to draw from stock!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        final Button drawButton = (Button) findViewById(R.id.drawButton);
+        drawButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Domino drawnDomino = round.playerDraw(human);
+                if (drawnDomino != null) {
+                    Toast.makeText(MainActivity.this, "You drew " + drawnDomino.toString(), Toast.LENGTH_SHORT).show();
+                    refreshLayout();
+                } else {
+                    Toast.makeText(MainActivity.this, "You can't draw yet! \nYou might have a valid move in your hand or you already drew from stock!", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        Button hintButton = (Button) findViewById(R.id.saveButton);
+        hintButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String hint = round.getHint();
+                if (hint == null) {
+                    hint = "You do not have any valid moves in hand! You need to draw or pass!";
+                }
+                Toast.makeText(MainActivity.this, hint, Toast.LENGTH_LONG).show();
+            }
+        });
+
         round.init();
+        //save and quit
         AlertDialog.Builder messages = new AlertDialog.Builder(this);
-        messages.setMessage(round.determineFirstPlayer());
+        messages.setMessage(round.determineFirstPlayer())
+                .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        normalizePlayTurn();
+                    }
+                });
+        //save and quit, normalize the firstPlayer
         messages.show();
         refreshLayout();
 
@@ -53,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         GridLayout computerHandLayout = (GridLayout) findViewById(R.id.computerHand);
 
         layoutLayout.removeAllViews();
-        addButtonsToLayout(layout, layoutLayout, false);
+        addDominosToGameLayout(layout, layoutLayout);
 
         stockLayout.removeAllViews();
         addButtonsToLayout(stock, stockLayout, false);
@@ -64,12 +114,26 @@ public class MainActivity extends AppCompatActivity {
         computerHandLayout.removeAllViews();
         addButtonsToLayout(computerHand, computerHandLayout, false);
 
+    }
 
+    private void addDominosToGameLayout(Vector<Domino> dominoes, GridLayout layout) {
+        GridLayout.LayoutParams gridLayoutParam;
+
+        int row = 0, col = 0;
+        for (int i = 0; i < dominoes.size(); i++) {
+            if (i >= 14) row = 1;
+            col = i % 14;
+            GridLayout.Spec gridRow = GridLayout.spec(row, 1);
+            GridLayout.Spec gridCol = GridLayout.spec(col, 1);
+            gridLayoutParam = new GridLayout.LayoutParams(gridRow, gridCol);
+            layout.addView(getDominoButton(dominoes.get(i), false), gridLayoutParam);
+        }
     }
 
     private void addButtonsToLayout(Vector<Domino> dominoes, GridLayout layout, boolean buttonsEnabled) {
+        GridLayout.LayoutParams gridLayoutParam;
         for (int i = 0; i < dominoes.size(); i++) {
-            GridLayout.LayoutParams gridLayoutParam = new GridLayout.LayoutParams(GridLayout.spec(0), GridLayout.spec(i));
+            gridLayoutParam = new GridLayout.LayoutParams(GridLayout.spec(0), GridLayout.spec(i));
             layout.addView(getDominoButton(dominoes.get(i), buttonsEnabled), gridLayoutParam);
         }
     }
@@ -84,17 +148,17 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     AlertDialog.Builder sideSelector = new AlertDialog.Builder(MainActivity.this);
-                    sideSelector.setMessage("Setect a side to player: ")
+                    sideSelector.setMessage("Setect a side to play: ")
                             .setPositiveButton("RIGHT", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    playRound(domino, Side.RIGHT);
+                                    if (playRound(domino, Side.RIGHT)) normalizePlayTurn();
                                 }
                             })
                             .setNegativeButton("LEFT", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    playRound(domino, Side.LEFT);
+                                    if (playRound(domino, Side.LEFT)) normalizePlayTurn();
                                 }
                             });
                     sideSelector.show();
@@ -108,13 +172,22 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void playRound(Domino domino, Side side) {
+    private boolean playRound(Domino domino, Side side) {
         String message = round.play(domino, side);
         if (message != null) {
             Toast toast = Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG);
             toast.show();
+            return false;
         }
         refreshLayout();
+        return true;
+    }
+
+    private void normalizePlayTurn() {
+        String normalizeResult = round.normalizeTurn();
+        refreshLayout();
+        if (normalizeResult != null)
+            Toast.makeText(MainActivity.this, normalizeResult, Toast.LENGTH_LONG).show();
     }
 }
 

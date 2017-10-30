@@ -10,7 +10,8 @@ import java.util.Vector;
  * Created by beeshall on 10/17/17.
  */
 
-public class Player {
+class Player {
+    public boolean dominoDrawn;
     protected int score;
     protected Hand hand;
     protected Side side;
@@ -24,6 +25,7 @@ public class Player {
     public Player(int score, Hand hand){
         this.score=score;
         this.hand=hand;
+        this.dominoDrawn = false;
         this.hintStrategy = new String("");
     }
 
@@ -33,6 +35,18 @@ public class Player {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public boolean hasAlreadyDrawn() {
+        return dominoDrawn;
+    }
+
+    public void setDominoDrawn() {
+        dominoDrawn = true;
+    }
+
+    public void unsetDominoDrawn() {
+        dominoDrawn = false;
     }
 
     public Vector<Domino> getHand() {
@@ -51,7 +65,25 @@ public class Player {
         return hand.isEmpty();
     }
 
+    public boolean hasValidMove(Layout layout, boolean playerPassed) {
+        for (int i = 0; i < hand.getHandSize(); i++) {
+            if (layout.canDominoBePlaced(hand.getDomino(i), side)) {
+                Log.v("Domino ", "" + side);
+                return true;
+            }
+            if (playerPassed || hand.getDomino(i).isDouble()) {
+                if (layout.canDominoBePlaced(hand.getDomino(i), otherSide)) {
+                    Log.v("Domino", "" + otherSide);
+                    return true;
+                }
+            }
+        }
+        Log.v("Player", "doesn't have any valid move`");
+        return false;
+    }
+
     public void drawDomino(Domino domino){
+        setDominoDrawn();
         hand.add(domino);
     }
 
@@ -76,7 +108,8 @@ public class Player {
     public boolean play(int dominoIndex, Layout layout, Side side, boolean playerPassed) {
         Domino domino = hand.getDomino(dominoIndex);
         if (layout.isEngineSet()) {
-            if (side == otherSide && (!domino.isDouble() || !playerPassed)) return false;
+            Log.v("Placing domino", "" + domino.isDouble() + " " + playerPassed);
+            if (side == otherSide && (!domino.isDouble() && !playerPassed)) return false;
             return playDomino(dominoIndex, layout, side);
         }
         return false;

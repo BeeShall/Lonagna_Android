@@ -32,11 +32,8 @@ public class Domino {
         return this.doubleDomino;
     }
 
-    public Domino flip(){
-        int temp = pip1;
-        pip1 = pip2;
-        pip2 = temp;
-        return  this;
+    Domino flip() {
+        return new Domino(pip2, pip1);
     }
 
     public int getSum(){

@@ -28,4 +28,9 @@ public class Move {
     public void setSide(Side side) {
         this.side = side;
     }
+
+    @Override
+    public String toString() {
+        return new StringBuilder().append(domino.toString()).append(" on the ").append(side.toString()).toString();
+    }
 }

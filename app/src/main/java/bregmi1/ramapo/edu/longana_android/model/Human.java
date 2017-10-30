@@ -18,8 +18,4 @@ public class Human extends Player {
         return this.hintStrategy;
     }
 
-    @Override
-    public boolean play(int dominoIndex, Layout layout, Side side, boolean playerPassed) {
-        return super.play(dominoIndex, layout, side, playerPassed);
-    }
 }

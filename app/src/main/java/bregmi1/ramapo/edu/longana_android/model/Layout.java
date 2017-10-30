@@ -71,13 +71,17 @@ public class Layout {
     }
 
     public boolean placeDomino(Domino domino, Side side) {
-
         if (!engineSet) return false;
         Domino validatedDomino = checkIfDominoCanBePlaced(domino,side);
         if (validatedDomino == null) return false;
-        if(side == Side.LEFT) left.add(domino);
-        else if(side == Side.RIGHT) right.add(domino);
+        if (side == Side.LEFT) left.add(validatedDomino);
+        else if (side == Side.RIGHT) right.add(validatedDomino);
         return true;
+    }
+
+    public boolean canDominoBePlaced(Domino domino, Side side) {
+        if (!engineSet) return false;
+        return checkIfDominoCanBePlaced(domino, side) != null;
     }
 
     public void undo(Side side) {

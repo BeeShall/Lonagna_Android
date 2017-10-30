@@ -31,6 +31,9 @@ public class Stock {
         return (Vector<Domino>) stock.clone();
     }
 
+    public boolean isEmpty() {
+        return stock.isEmpty();
+    }
     public void shuffleStock(){
         Random random = new Random(System.currentTimeMillis());
         Collections.shuffle(stock,random);
