@@ -14,7 +14,7 @@ public class Domino {
         pip2 = -1;
     }
 
-    public Domino(int pip1, int pip2){
+    Domino(int pip1, int pip2) {
         this.pip1 = pip1;
         this.pip2 = pip2;
         this.doubleDomino = (pip1 == pip2);
@@ -36,16 +36,16 @@ public class Domino {
         return new Domino(pip2, pip1);
     }
 
-    public int getSum(){
+    int getSum() {
         return pip1+pip2;
     }
 
-    public boolean equals(Domino domino) {
+    boolean equals(Domino domino) {
         return ((pip1 == domino.pip1) &&  (pip2 == domino.pip2)) || ((pip1 == domino.pip2) &&  (pip2 == domino.pip1));
     }
 
     public String toString(){
-        return new StringBuilder().append(pip1).append("-").append(pip2).toString();
+        return pip1 + "-" + pip2;
     }
 
 }

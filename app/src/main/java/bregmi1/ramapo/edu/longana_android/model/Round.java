@@ -137,7 +137,7 @@ public class Round {
         Move hint = human.getHint(layout, playerPassed);
         if (hint == null) return null;
         else
-            return new StringBuilder().append(human.getHint(layout, playerPassed).toString()).append("\nHint Strategy: \n").append(human.getHintStrategy()).toString();
+            return human.getHint(layout, playerPassed).toString() + "\nHint Strategy: \n" + human.getHintStrategy();
 
     }
 

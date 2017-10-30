@@ -11,7 +11,7 @@ import java.util.Vector;
 
 
 public class Stock {
-    final int HAND_SIZE = 8;
+    private final int HAND_SIZE = 8;
     private Vector<Domino> stock;
 
     public Stock(){
@@ -27,19 +27,20 @@ public class Stock {
         }
     }
 
-    public Vector<Domino> getStock() {
+    Vector<Domino> getStock() {
         return (Vector<Domino>) stock.clone();
     }
 
-    public boolean isEmpty() {
+    boolean isEmpty() {
         return stock.isEmpty();
     }
-    public void shuffleStock(){
+
+    void shuffleStock() {
         Random random = new Random(System.currentTimeMillis());
         Collections.shuffle(stock,random);
     }
 
-    public Hand generateHand(){
+    Hand generateHand() {
         Vector <Domino> hand = new Vector<>();
         for(int i=0; i<HAND_SIZE; i++){
             hand.add(stock.elementAt(0));
@@ -48,7 +49,7 @@ public class Stock {
         return new Hand(hand);
     }
 
-    public Domino drawDomino(){
+    Domino drawDomino() {
         if(stock.isEmpty()) return  null;
         Domino temp = stock.elementAt(0);
         stock.removeElementAt(0);

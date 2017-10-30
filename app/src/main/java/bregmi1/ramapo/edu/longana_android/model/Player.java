@@ -11,14 +11,14 @@ import java.util.Vector;
  */
 
 class Player {
-    public boolean dominoDrawn;
-    protected int score;
     protected Hand hand;
-    protected Side side;
-    protected Side otherSide;
-    protected String hintStrategy;
+    Side side;
+    Side otherSide;
+    String hintStrategy;
+    private boolean dominoDrawn;
+    private int score;
 
-    public Player(){
+    Player() {
         this(0,null);
     }
 
@@ -26,7 +26,7 @@ class Player {
         this.score=score;
         this.hand=hand;
         this.dominoDrawn = false;
-        this.hintStrategy = new String("");
+        this.hintStrategy = "";
     }
 
     public int getScore() {
@@ -37,7 +37,7 @@ class Player {
         this.score = score;
     }
 
-    public boolean hasAlreadyDrawn() {
+    boolean hasAlreadyDrawn() {
         return dominoDrawn;
     }
 
@@ -45,7 +45,7 @@ class Player {
         dominoDrawn = true;
     }
 
-    public void unsetDominoDrawn() {
+    void unsetDominoDrawn() {
         dominoDrawn = false;
     }
 
@@ -61,11 +61,11 @@ class Player {
         this.score += score;
     }
 
-    public boolean isHandEmpty(){
+    boolean isHandEmpty() {
         return hand.isEmpty();
     }
 
-    public boolean hasValidMove(Layout layout, boolean playerPassed) {
+    boolean hasValidMove(Layout layout, boolean playerPassed) {
         for (int i = 0; i < hand.getHandSize(); i++) {
             if (layout.canDominoBePlaced(hand.getDomino(i), side)) {
                 Log.v("Domino ", "" + side);
@@ -82,16 +82,16 @@ class Player {
         return false;
     }
 
-    public void drawDomino(Domino domino){
+    void drawDomino(Domino domino) {
         setDominoDrawn();
         hand.add(domino);
     }
 
-    public int hasDominoInHand(Domino domino){
+    int hasDominoInHand(Domino domino) {
         return hand.getDominoIndex(domino);
     }
 
-    public boolean playDomino(int dominoIndex, Layout layout, Side side) {
+    boolean playDomino(int dominoIndex, Layout layout, Side side) {
         Domino domino = hand.getDomino(dominoIndex);
         if (domino.equals(layout.getEngine())) {
             layout.setEngine();
@@ -202,7 +202,7 @@ class Player {
             }
         });
 
-        if (move.getDomino().equals(moves.firstElement()))
+        if (move.getDomino().equals(moves.firstElement().getDomino()))
             bestScore = moves.get(1).getDomino().getSum();
         else bestScore = moves.firstElement().getDomino().getSum();
 

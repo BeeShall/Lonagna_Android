@@ -4,16 +4,16 @@ package bregmi1.ramapo.edu.longana_android.model;
  * Created by beeshall on 10/29/17.
  */
 
-public class Move {
+class Move {
     private Domino domino;
     private Side side;
 
-    public Move(Domino domino, Side side) {
+    Move(Domino domino, Side side) {
         this.domino = domino;
         this.side = side;
     }
 
-    public Domino getDomino() {
+    Domino getDomino() {
         return domino;
     }
 
@@ -21,16 +21,16 @@ public class Move {
         this.domino = domino;
     }
 
-    public Side getSide() {
+    Side getSide() {
         return side;
     }
 
-    public void setSide(Side side) {
+    void setSide(Side side) {
         this.side = side;
     }
 
     @Override
     public String toString() {
-        return new StringBuilder().append(domino.toString()).append(" on the ").append(side.toString()).toString();
+        return domino.toString() + " on the " + side.toString();
     }
 }

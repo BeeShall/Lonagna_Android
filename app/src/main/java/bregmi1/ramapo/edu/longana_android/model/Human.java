@@ -10,11 +10,11 @@ public class Human extends Player {
         otherSide = Side.RIGHT;
     }
 
-    public Move getHint(Layout layout, boolean playerPassed) {
+    Move getHint(Layout layout, boolean playerPassed) {
         return hint(layout, playerPassed);
     }
 
-    public String getHintStrategy() {
+    String getHintStrategy() {
         return this.hintStrategy;
     }
 

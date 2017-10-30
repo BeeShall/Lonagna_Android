@@ -24,15 +24,15 @@ public class Layout {
         right = new Vector<>();
     }
 
-    public Domino getEngine(){
+    Domino getEngine() {
         return this.engine;
     }
 
-    public void setEngine(){
+    void setEngine() {
         engineSet = true;
     }
 
-    public boolean isEngineSet() {
+    boolean isEngineSet() {
         return engineSet;
     }
 
@@ -65,12 +65,12 @@ public class Layout {
         else return true;
     }
 
-    public boolean isMoveValid(Domino domino, Side side) {
+    boolean isMoveValid(Domino domino, Side side) {
         if (!engineSet) return false;
         return checkIfDominoCanBePlaced(domino, side) != null;
     }
 
-    public boolean placeDomino(Domino domino, Side side) {
+    boolean placeDomino(Domino domino, Side side) {
         if (!engineSet) return false;
         Domino validatedDomino = checkIfDominoCanBePlaced(domino,side);
         if (validatedDomino == null) return false;
@@ -79,12 +79,12 @@ public class Layout {
         return true;
     }
 
-    public boolean canDominoBePlaced(Domino domino, Side side) {
+    boolean canDominoBePlaced(Domino domino, Side side) {
         if (!engineSet) return false;
         return checkIfDominoCanBePlaced(domino, side) != null;
     }
 
-    public void undo(Side side) {
+    void undo(Side side) {
         if (side == Side.LEFT) left.removeElementAt(left.size() - 1);
         if (side == Side.RIGHT) right.removeElementAt(right.size() - 1);
     }
