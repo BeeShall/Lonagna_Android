@@ -18,7 +18,7 @@ import bregmi1.ramapo.edu.longana_android.model.Human;
 import bregmi1.ramapo.edu.longana_android.model.Round;
 import bregmi1.ramapo.edu.longana_android.model.Side;
 
-public class MainActivity extends Activity {
+public class RoundActivity extends Activity {
 
     private Human human;
     private Computer computer;
@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_round);
 
         human = new Human();
         computer = new Computer();
@@ -43,7 +43,7 @@ public class MainActivity extends Activity {
                     //normalize the turn
                     //ask to save
                 } else {
-                    Toast.makeText(MainActivity.this, "You can't pass yet! \nYou might have a valid move in your hand or you might be able to draw from stock!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RoundActivity.this, "You can't pass yet! \nYou might have a valid move in your hand or you might be able to draw from stock!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -54,10 +54,10 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 Domino drawnDomino = round.playerDraw(human);
                 if (drawnDomino != null) {
-                    Toast.makeText(MainActivity.this, "You drew " + drawnDomino.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RoundActivity.this, "You drew " + drawnDomino.toString(), Toast.LENGTH_SHORT).show();
                     refreshLayout();
                 } else {
-                    Toast.makeText(MainActivity.this, "You can't draw yet! \nYou might have a valid move in your hand or you already drew from stock!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RoundActivity.this, "You can't draw yet! \nYou might have a valid move in your hand or you already drew from stock!", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
                 if (hint == null) {
                     hint = "You do not have any valid moves in hand! You need to draw or pass!";
                 }
-                Toast.makeText(MainActivity.this, hint, Toast.LENGTH_LONG).show();
+                Toast.makeText(RoundActivity.this, hint, Toast.LENGTH_LONG).show();
             }
         });
 
@@ -92,6 +92,22 @@ public class MainActivity extends Activity {
     }
 
     private void refreshLayout() {
+        //check for round end here
+        if (round.hasRoundEnded()) {
+            AlertDialog.Builder messages = new AlertDialog.Builder(this);
+            StringBuilder roundScores = new StringBuilder();
+            roundScores.append("Round Ended!\n");
+            //calculate scores and show here
+            messages.setMessage("")
+                    .setPositiveButton("Start Next Round", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //kill the activity
+                        }
+                    });
+            //save and quit, normalize the firstPlayer
+            messages.show();
+        }
         Vector<Domino> layout = round.getLayout();
         Vector<Domino> stock = round.getStock();
         Vector<Domino> humanHand = human.getHand();
@@ -147,7 +163,7 @@ public class MainActivity extends Activity {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AlertDialog.Builder sideSelector = new AlertDialog.Builder(MainActivity.this);
+                    AlertDialog.Builder sideSelector = new AlertDialog.Builder(RoundActivity.this);
                     sideSelector.setMessage("Setect a side to play: ")
                             .setPositiveButton("RIGHT", new DialogInterface.OnClickListener() {
                                 @Override
@@ -175,7 +191,7 @@ public class MainActivity extends Activity {
     private boolean playRound(Domino domino, Side side) {
         String message = round.play(domino, side);
         if (message != null) {
-            Toast toast = Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(RoundActivity.this, message, Toast.LENGTH_LONG);
             toast.show();
             return false;
         }
@@ -187,7 +203,7 @@ public class MainActivity extends Activity {
         String normalizeResult = round.normalizeTurn();
         refreshLayout();
         if (normalizeResult != null)
-            Toast.makeText(MainActivity.this, normalizeResult, Toast.LENGTH_LONG).show();
+            Toast.makeText(RoundActivity.this, normalizeResult, Toast.LENGTH_LONG).show();
     }
 }
 

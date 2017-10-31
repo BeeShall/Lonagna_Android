@@ -16,7 +16,6 @@ public class Round {
     private Layout layout;
     private boolean playerPassed;
     private int passCount;
-    private boolean roundEnded;
 
     private boolean computerTurn;
 
@@ -31,7 +30,6 @@ public class Round {
         this.layout = new Layout(new Domino(enginePip,enginePip));
         passCount = 0;
         playerPassed = false;
-        roundEnded = false;
     }
 
     public Vector<Domino> getLayout() {
@@ -40,10 +38,6 @@ public class Round {
 
     public Vector<Domino> getStock() {
         return stock.getStock();
-    }
-
-    public boolean getRoundEnded(){
-        return roundEnded;
     }
 
     public void init(){
@@ -107,7 +101,7 @@ public class Round {
         //humanMove
         if (!human.play(human.hasDominoInHand(domino), layout, side, playerPassed))
             return "Invalid move!";
-        playerPassed = false;
+        resetPass();
         human.unsetDominoDrawn();
         computerTurn = true;
         return null;
@@ -118,7 +112,7 @@ public class Round {
         if (player.hasValidMove(layout, playerPassed)) return false;
         if (!player.hasAlreadyDrawn()) return false;
         player.unsetDominoDrawn();
-        playerPassed = true;
+        passPlayer();
         computerTurn = true;
         return true;
     }
@@ -149,7 +143,7 @@ public class Round {
 
             if (stock.isEmpty()) {
                 compMove.append("Stock is empty! So, computer passed!");
-                playerPassed = true;
+                passPlayer();
                 return compMove.toString();
             }
 
@@ -159,21 +153,30 @@ public class Round {
             computer.drawDomino(drawnDomino);
             if (!computer.play(layout, playerPassed)) {
                 compMove.append("Computer still doesn't have a move to play.\n So, Computer passed!");
-                playerPassed = true;
+                passPlayer();
                 return compMove.toString();
             }
-            playerPassed = false;
+            resetPass();
             computer.unsetDominoDrawn();
             return compMove.append(computer.getMoveStrategy()).toString();
 
         }
-        playerPassed = false;
+        resetPass();
         return computer.getMoveStrategy();
     }
 
-    private boolean hasRoundEnded(){
-        roundEnded = (human.isHandEmpty() || computer.isHandEmpty()) || (passCount > 2);
-        return roundEnded;
+    private void passPlayer() {
+        playerPassed = true;
+        passCount++;
+    }
+
+    private void resetPass() {
+        playerPassed = false;
+        passCount = 0;
+    }
+
+    public boolean hasRoundEnded() {
+        return (human.isHandEmpty() || computer.isHandEmpty()) || (passCount > 2);
     }
 
 }

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="bregmi1.ramapo.edu.longana_android.view.MainActivity">
+    tools:context="bregmi1.ramapo.edu.longana_android.view.RoundActivity">
 
     <GridLayout
         android:layout_width="match_parent"
