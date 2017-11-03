@@ -2,13 +2,15 @@ package bregmi1.ramapo.edu.longana_android.model;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.Vector;
 
 /**
  * Created by beeshall on 10/17/17.
  */
 
-public class Round {
+//implementing as serializable so that it can be passed from TournamentActivity to RoundActivity
+public class Round implements Serializable {
     private final int MAX_PIP = 6;
     private Stock stock;
     private Human human;
@@ -38,6 +40,14 @@ public class Round {
 
     public Vector<Domino> getStock() {
         return stock.getStock();
+    }
+
+    public Vector<Domino> getHumanHand() {
+        return human.getHand();
+    }
+
+    public Vector<Domino> getComputerHand() {
+        return computer.getHand();
     }
 
     public void init(){
@@ -108,22 +118,22 @@ public class Round {
         //return null;
     }
 
-    public boolean playerPass(Player player) {
-        if (player.hasValidMove(layout, playerPassed)) return false;
-        if (!player.hasAlreadyDrawn()) return false;
-        player.unsetDominoDrawn();
+    public boolean humanPass() {
+        if (human.hasValidMove(layout, playerPassed)) return false;
+        if (!human.hasAlreadyDrawn()) return false;
+        human.unsetDominoDrawn();
         passPlayer();
         computerTurn = true;
         return true;
     }
 
-    public Domino playerDraw(Player player) {
-        if (player.hasValidMove(layout, playerPassed)) return null;
-        if (player.hasAlreadyDrawn()) return null;
-        Log.v("Player drew", "" + player.hasAlreadyDrawn());
+    public Domino humanDraw() {
+        if (human.hasValidMove(layout, playerPassed)) return null;
+        if (human.hasAlreadyDrawn()) return null;
+        Log.v("Player drew", "" + human.hasAlreadyDrawn());
         if (stock.isEmpty()) return null;
         Domino domino = stock.drawDomino();
-        player.drawDomino(domino);
+        human.drawDomino(domino);
         return domino;
     }
 
@@ -178,5 +188,48 @@ public class Round {
     public boolean hasRoundEnded() {
         return (human.isHandEmpty() || computer.isHandEmpty()) || (passCount > 2);
     }
+
+    public String getRoundWinnerAndScore() {
+        StringBuilder scores = new StringBuilder();
+        //holds sum of all tiles for human
+        int humanTotal = human.getHandSum();
+        //holds sum of all tiles for computer
+        int computerTotal = computer.getHandSum();
+        scores.append("Computer Score: ").append(humanTotal)
+                .append("\nHuman Score: ").append(computerTotal).append("\n");
+
+        int score = 0;
+        //if human emptied the hand , he wins
+        if (human.isHandEmpty()) {
+            scores.append("Human");
+            human.addScore(computerTotal);
+            score = computerTotal;
+        }
+        //if computer emptied the hand, computer wins
+        else if (computer.isHandEmpty()) {
+            scores.append("Computer");
+            computer.addScore(humanTotal);
+            score = humanTotal;
+        }
+        //if human has less sum than computer, human wins
+        else if (humanTotal < computerTotal) {
+            scores.append("Human");
+            human.addScore(computerTotal);
+            score = computerTotal;
+        }
+        //if computer has less sum, computer wins
+        else if (humanTotal > computerTotal) {
+            scores.append("Computer");
+            computer.addScore(humanTotal);
+            score = humanTotal;
+        }
+        //if equal, its a draw
+        else {
+            scores.append("The round ended with a draw!");
+            return scores.toString();
+        }
+        return scores.append(" won this round with a score of ").append(score).toString();
+    }
+
 
 }

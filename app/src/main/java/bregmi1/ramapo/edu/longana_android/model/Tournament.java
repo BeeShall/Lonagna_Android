@@ -5,7 +5,7 @@ package bregmi1.ramapo.edu.longana_android.model;
  */
 
 public class Tournament {
-    private static final int MAX_PIP = 6;
+    private static final int MAX_PIP = 7;
 
     private int tournamentScore;
     private Round currentRound;
@@ -16,10 +16,10 @@ public class Tournament {
     public Tournament() {
         currentRound = null;
         tournamentScore = 0;
-        roundCount = 0;
+        roundCount = 1;
         human = new Human();
         computer = new Computer();
-        this.tournamentScore = tournamentScore;
+        this.tournamentScore = 0;
     }
 
     public int getTournamentScore() {
@@ -28,6 +28,10 @@ public class Tournament {
 
     public void setTournamentScore(int tournamentScore) {
         this.tournamentScore = tournamentScore;
+    }
+
+    public int getCurrentRoundCount() {
+        return roundCount - 1;
     }
 
     public Round getCurrentRound() {
@@ -45,16 +49,19 @@ public class Tournament {
         return (human.getScore() > tournamentScore || computer.getScore() > tournamentScore);
     }
 
-    public String getWinner() {
+    public String getWinnerAndScores() {
+        StringBuilder scores = new StringBuilder();
         int humanScore = human.getScore();
         int computerScore = computer.getScore();
+        scores.append("Human Score: ").append(humanScore)
+                .append("\nComputer Score: ").append(computerScore);
         //if human has greater score, human is winner
         if (humanScore > computerScore) {
-            return "Human";
+            return scores.append("\nHuman won the tournament!").toString();
         }
         //else computer is winner
         else {
-            return "Computer";
+            return scores.append("\nComputer won the tournament!").toString();
         }
     }
 

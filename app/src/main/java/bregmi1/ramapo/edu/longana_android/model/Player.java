@@ -2,6 +2,7 @@ package bregmi1.ramapo.edu.longana_android.model;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
@@ -10,7 +11,7 @@ import java.util.Vector;
  * Created by beeshall on 10/17/17.
  */
 
-class Player {
+class Player implements Serializable {
     protected Hand hand;
     Side side;
     Side otherSide;
@@ -63,6 +64,10 @@ class Player {
 
     boolean isHandEmpty() {
         return hand.isEmpty();
+    }
+
+    public int getHandSum() {
+        return hand.getHandSum();
     }
 
     boolean hasValidMove(Layout layout, boolean playerPassed) {

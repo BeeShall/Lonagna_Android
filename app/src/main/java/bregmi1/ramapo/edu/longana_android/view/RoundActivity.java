@@ -2,26 +2,24 @@ package bregmi1.ramapo.edu.longana_android.view;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Vector;
 
 import bregmi1.ramapo.edu.longana_android.R;
-import bregmi1.ramapo.edu.longana_android.model.Computer;
 import bregmi1.ramapo.edu.longana_android.model.Domino;
-import bregmi1.ramapo.edu.longana_android.model.Human;
 import bregmi1.ramapo.edu.longana_android.model.Round;
 import bregmi1.ramapo.edu.longana_android.model.Side;
 
 public class RoundActivity extends Activity {
 
-    private Human human;
-    private Computer computer;
     private Round round;
 
     @Override
@@ -29,16 +27,21 @@ public class RoundActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_round);
 
-        human = new Human();
-        computer = new Computer();
+        Intent intent = getIntent();
+        round = (Round) intent.getSerializableExtra("round");
 
-        round = new Round(human, computer, 6);
+        TextView tournamentScore = (TextView) findViewById(R.id.tournamentScore);
+        tournamentScore.setText(intent.getSerializableExtra("tournamentScore").toString());
+
+        TextView roundCount = (TextView) findViewById(R.id.roundCount);
+        roundCount.setText(intent.getSerializableExtra("roundCount").toString());
+
 
         Button passButton = (Button) findViewById(R.id.passButton);
         passButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (round.playerPass(human)) {
+                if (round.humanPass()) {
                     normalizePlayTurn();
                     //normalize the turn
                     //ask to save
@@ -52,7 +55,7 @@ public class RoundActivity extends Activity {
         drawButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Domino drawnDomino = round.playerDraw(human);
+                Domino drawnDomino = round.humanDraw();
                 if (drawnDomino != null) {
                     Toast.makeText(RoundActivity.this, "You drew " + drawnDomino.toString(), Toast.LENGTH_SHORT).show();
                     refreshLayout();
@@ -91,18 +94,23 @@ public class RoundActivity extends Activity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+
+    }
+
     private void refreshLayout() {
         //check for round end here
         if (round.hasRoundEnded()) {
             AlertDialog.Builder messages = new AlertDialog.Builder(this);
             StringBuilder roundScores = new StringBuilder();
-            roundScores.append("Round Ended!\n");
+            roundScores.append("Round Ended!\n").append(round.getRoundWinnerAndScore());
             //calculate scores and show here
-            messages.setMessage("")
-                    .setPositiveButton("Start Next Round", new DialogInterface.OnClickListener() {
+            messages.setMessage(roundScores.toString())
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            //kill the activity
+                            finish();
                         }
                     });
             //save and quit, normalize the firstPlayer
@@ -110,8 +118,8 @@ public class RoundActivity extends Activity {
         }
         Vector<Domino> layout = round.getLayout();
         Vector<Domino> stock = round.getStock();
-        Vector<Domino> humanHand = human.getHand();
-        Vector<Domino> computerHand = computer.getHand();
+        Vector<Domino> humanHand = round.getHumanHand();
+        Vector<Domino> computerHand = round.getComputerHand();
 
         GridLayout layoutLayout = (GridLayout) findViewById(R.id.layout);
         GridLayout stockLayout = (GridLayout) findViewById(R.id.stock);

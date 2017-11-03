@@ -1,12 +1,13 @@
 package bregmi1.ramapo.edu.longana_android.model;
 
+import java.io.Serializable;
 import java.util.Vector;
 
 /**
  * Created by beeshall on 10/17/17.
  */
 
-public class Hand {
+public class Hand implements Serializable {
     public Vector<Domino> hand;
 
     public Hand(Vector<Domino> hand){

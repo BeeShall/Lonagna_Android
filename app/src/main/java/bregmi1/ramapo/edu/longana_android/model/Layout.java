@@ -1,5 +1,6 @@
 package bregmi1.ramapo.edu.longana_android.model;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Vector;
 
@@ -7,7 +8,7 @@ import java.util.Vector;
  * Created by beeshall on 10/17/17.
  */
 
-public class Layout {
+public class Layout implements Serializable {
     private Vector<Domino> left;
     private Domino engine;
     private boolean engineSet;

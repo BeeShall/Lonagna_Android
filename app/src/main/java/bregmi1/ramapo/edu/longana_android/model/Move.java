@@ -1,10 +1,12 @@
 package bregmi1.ramapo.edu.longana_android.model;
 
+import java.io.Serializable;
+
 /**
  * Created by beeshall on 10/29/17.
  */
 
-class Move {
+class Move implements Serializable {
     private Domino domino;
     private Side side;
 

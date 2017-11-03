@@ -1,5 +1,6 @@
 package bregmi1.ramapo.edu.longana_android.model;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Random;
 import java.util.Vector;
@@ -9,8 +10,7 @@ import java.util.Vector;
  */
 
 
-
-public class Stock {
+public class Stock implements Serializable {
     private final int HAND_SIZE = 8;
     private Vector<Domino> stock;
 

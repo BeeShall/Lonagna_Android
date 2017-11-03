@@ -1,10 +1,12 @@
 package bregmi1.ramapo.edu.longana_android.model;
 
+import java.io.Serializable;
+
 /**
  * Created by beeshall on 10/17/17.
  */
 
-public class Domino {
+public class Domino implements Serializable {
     private int pip1;
     private int pip2;
     private boolean doubleDomino;
