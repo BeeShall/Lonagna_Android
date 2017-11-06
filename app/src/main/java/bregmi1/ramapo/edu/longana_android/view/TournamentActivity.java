@@ -4,10 +4,19 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.InputStream;
 
 import bregmi1.ramapo.edu.longana_android.R;
 import bregmi1.ramapo.edu.longana_android.model.Round;
@@ -36,6 +45,41 @@ public class TournamentActivity extends Activity {
                             public void onClick(DialogInterface dialog, int which) {
                                 //load the tournament
                                 //get the round and start the roundActivity
+                                AlertDialog.Builder alert = new AlertDialog.Builder(TournamentActivity.this);
+                                alert.setTitle("Select a game");
+
+                                Log.v("Directory", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
+                                final File[] files = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).listFiles(new FilenameFilter() {
+                                    @Override
+                                    public boolean accept(File dir, String name) {
+                                        return true;
+                                    }
+                                });
+
+
+                                String[] items = new String[files.length];
+                                for (int i = 0; i < files.length; ++i) {
+                                    items[i] = files[i].getName();
+                                }
+
+
+                                alert.setItems(items, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        ListView lw = ((AlertDialog) dialog).getListView();
+                                        String fileName = (String) lw.getAdapter().getItem(which);
+
+                                        //de-serialize and create round;
+                                        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + fileName;
+                                        try {
+                                            InputStream is = new FileInputStream(filePath);
+                                            startRoundActivity(tournament.load(is));
+                                        } catch (FileNotFoundException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                                alert.show();
                             }
                         })
                         .setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -50,7 +94,7 @@ public class TournamentActivity extends Activity {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 tournament.setTournamentScore(Integer.parseInt(scoreText.getText().toString()));
-                                                launchNewRound();
+                                                startRoundActivity(tournament.generateNewRound());
                                             }
                                         });
                                 scoreAlert.show();
@@ -61,8 +105,8 @@ public class TournamentActivity extends Activity {
         });
     }
 
-    private void launchNewRound() {
-        Round round = tournament.generateNewRound();
+
+    private void startRoundActivity(Round round) {
         Intent intent = new Intent(this, RoundActivity.class);
         intent.putExtra("round", round);
         intent.putExtra("tournamentScore", tournament.getTournamentScore());
@@ -84,7 +128,7 @@ public class TournamentActivity extends Activity {
             //save and quit, normalize the firstPlayer
             messages.show();
         } else {
-            launchNewRound();
+            startRoundActivity(tournament.generateNewRound());
         }
     }
 }

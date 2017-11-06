@@ -50,6 +50,7 @@ public class Layout implements Serializable {
 
     public void setLayout(Vector<Domino> dominoes){
         if(dominoes.isEmpty()) return;
+        engineSet = true;
         left.clear();
         right.clear();
 

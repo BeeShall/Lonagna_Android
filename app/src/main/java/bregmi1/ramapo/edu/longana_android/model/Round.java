@@ -2,6 +2,8 @@ package bregmi1.ramapo.edu.longana_android.model;
 
 import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Vector;
 
@@ -50,14 +52,23 @@ public class Round implements Serializable {
         return computer.getHand();
     }
 
-    public void init(){
-        stock.shuffleStock();
-        human.setHand(stock.generateHand());
-        computer.setHand(stock.generateHand());
+    public int getPlayerScore(Class player) {
+        if (player == Computer.class) return computer.getScore();
+        else if (player == Human.class) return human.getScore();
+        return -1;
+    }
 
+    public void init(){
+        if (human.isHandEmpty()) {
+            //brand new game
+            stock.shuffleStock();
+            human.setHand(stock.generateHand());
+            computer.setHand(stock.generateHand());
+        }
     }
 
     public String determineFirstPlayer(){
+        if (layout.isEngineSet()) return null;
         StringBuilder displayLog = new StringBuilder();
         Domino engine = layout.getEngine();
         while(!playerHasEngine(engine, displayLog)){
@@ -230,6 +241,83 @@ public class Round implements Serializable {
         }
         return scores.append(" won this round with a score of ").append(score).toString();
     }
+
+    public void load(BufferedReader reader) {
+
+        try {
+            reader.readLine();
+            reader.readLine();
+            //computer hand
+
+            String line = reader.readLine();
+            String[] lineData = line.split(":");
+
+            computer.setHand(new Hand(getDominosFromString(lineData[1])));
+
+            //computer score
+            line = reader.readLine();
+            lineData = line.split(":");
+            computer.setScore(Integer.parseInt(lineData[1].trim()));
+
+            reader.readLine();
+            reader.readLine();
+
+            //human hand
+            line = reader.readLine();
+            lineData = line.split(":");
+            human.setHand(new Hand(getDominosFromString(lineData[1])));
+
+            //human score
+            line = reader.readLine();
+            lineData = line.split(":");
+            human.setScore(Integer.parseInt(lineData[1].trim()));
+
+            reader.readLine();
+            reader.readLine();
+            line = reader.readLine().trim();
+            Log.v("Line:", line);
+            line = line.substring(1, line.length() - 2);
+            Log.v("Line:", line);
+            layout.setLayout(getDominosFromString(line));
+
+            reader.readLine();
+            reader.readLine();
+            line = reader.readLine().trim();
+            stock.setStock(getDominosFromString(line));
+
+            reader.readLine();
+            line = reader.readLine();
+            lineData = line.split(":");
+            lineData[1] = lineData[1].trim().toUpperCase();
+            if (lineData[1].equals("YES")) playerPassed = true;
+            else if (lineData[1].equals("NO")) playerPassed = false;
+
+            reader.readLine();
+            line = reader.readLine();
+            lineData = line.split(":");
+            lineData[1] = lineData[1].trim().toUpperCase();
+            if (lineData[1].equals("HUMAN")) computerTurn = false;
+            else if (lineData[1].equals("COMPUTER")) computerTurn = true;
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private Vector<Domino> getDominosFromString(String dominoString) {
+        Log.v("dominostring", dominoString);
+        if (dominoString.trim().equals("")) return new Vector<>();
+        String[] dominoStrings = dominoString.trim().split(" ");
+        Vector<Domino> dominos = new Vector<>();
+        for (String s : dominoStrings) {
+            s = s.trim();
+            dominos.add(new Domino(Character.getNumericValue(s.charAt(0)), Character.getNumericValue(s.charAt(2))));
+        }
+        return dominos;
+    }
+
 
 
 }

@@ -14,7 +14,9 @@ import android.widget.Toast;
 import java.util.Vector;
 
 import bregmi1.ramapo.edu.longana_android.R;
+import bregmi1.ramapo.edu.longana_android.model.Computer;
 import bregmi1.ramapo.edu.longana_android.model.Domino;
+import bregmi1.ramapo.edu.longana_android.model.Human;
 import bregmi1.ramapo.edu.longana_android.model.Round;
 import bregmi1.ramapo.edu.longana_android.model.Side;
 
@@ -80,16 +82,28 @@ public class RoundActivity extends Activity {
 
         round.init();
         //save and quit
-        AlertDialog.Builder messages = new AlertDialog.Builder(this);
-        messages.setMessage(round.determineFirstPlayer())
-                .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        normalizePlayTurn();
-                    }
-                });
-        //save and quit, normalize the firstPlayer
-        messages.show();
+        String firstPlayerLogic = round.determineFirstPlayer();
+        if (firstPlayerLogic != null) {
+            AlertDialog.Builder messages = new AlertDialog.Builder(this);
+            messages.setMessage(firstPlayerLogic)
+                    .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            normalizePlayTurn();
+                        }
+                    });
+            //save and quit, normalize the firstPlayer
+            messages.show();
+        } else {
+            normalizePlayTurn();
+        }
+
+        TextView humanScore = (TextView) findViewById(R.id.humanScore);
+        humanScore.setText("" + round.getPlayerScore(Human.class));
+
+        TextView computerScore = (TextView) findViewById(R.id.computerScore);
+        computerScore.setText("" + round.getPlayerScore(Computer.class));
+
         refreshLayout();
 
     }

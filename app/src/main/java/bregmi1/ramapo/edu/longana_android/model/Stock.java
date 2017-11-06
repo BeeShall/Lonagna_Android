@@ -31,6 +31,10 @@ public class Stock implements Serializable {
         return (Vector<Domino>) stock.clone();
     }
 
+    public void setStock(Vector<Domino> stock) {
+        this.stock = stock;
+    }
+
     boolean isEmpty() {
         return stock.isEmpty();
     }

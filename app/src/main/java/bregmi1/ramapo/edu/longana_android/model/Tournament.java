@@ -1,5 +1,10 @@
 package bregmi1.ramapo.edu.longana_android.model;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 /**
  * Created by beeshall on 10/17/17.
  */
@@ -38,9 +43,12 @@ public class Tournament {
         return currentRound;
     }
 
+    private int getEnginePip() {
+        return (roundCount % MAX_PIP == 0) ? 0 : (MAX_PIP - (roundCount) % MAX_PIP);
+    }
+
     public Round generateNewRound() {
-        int enginePip = (roundCount % MAX_PIP == 0) ? 0 : (MAX_PIP - (roundCount) % MAX_PIP);
-        currentRound = new Round(human, computer, enginePip);
+        currentRound = new Round(human, computer, getEnginePip());
         roundCount++;
         return currentRound;
     }
@@ -66,8 +74,23 @@ public class Tournament {
     }
 
 
-    public void load() {
+    public Round load(InputStream is) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        try {
+            String line = reader.readLine();
+            String[] lineData = line.split(":");
+            this.tournamentScore = Integer.parseInt(lineData[1].trim());
 
+            line = reader.readLine();
+            lineData = line.split(":");
+            this.roundCount = Integer.parseInt(lineData[1].trim());
+            currentRound = new Round(human, computer, getEnginePip());
+            currentRound.load(reader);
+            roundCount++;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return currentRound;
     }
 
 
