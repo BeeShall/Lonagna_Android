@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
@@ -46,7 +47,7 @@ public class RoundActivity extends Activity {
                 if (round.humanPass()) {
                     normalizePlayTurn();
                     //normalize the turn
-                    //ask to save
+                    askToSave();
                 } else {
                     Toast.makeText(RoundActivity.this, "You can't pass yet! \nYou might have a valid move in your hand or you might be able to draw from stock!", Toast.LENGTH_SHORT).show();
                 }
@@ -81,7 +82,7 @@ public class RoundActivity extends Activity {
         });
 
         round.init();
-        //save and quit
+        askToSave();
         String firstPlayerLogic = round.determineFirstPlayer();
         if (firstPlayerLogic != null) {
             AlertDialog.Builder messages = new AlertDialog.Builder(this);
@@ -99,10 +100,10 @@ public class RoundActivity extends Activity {
         }
 
         TextView humanScore = (TextView) findViewById(R.id.humanScore);
-        humanScore.setText("" + round.getPlayerScore(Human.class));
+        humanScore.setText(String.format("%d", round.getPlayerScore(Human.class)));
 
         TextView computerScore = (TextView) findViewById(R.id.computerScore);
-        computerScore.setText("" + round.getPlayerScore(Computer.class));
+        computerScore.setText(String.format("%d", round.getPlayerScore(Computer.class)));
 
         refreshLayout();
 
@@ -152,6 +153,8 @@ public class RoundActivity extends Activity {
         computerHandLayout.removeAllViews();
         addButtonsToLayout(computerHand, computerHandLayout, false);
 
+        askToSave();
+
     }
 
     private void addDominosToGameLayout(Vector<Domino> dominoes, GridLayout layout) {
@@ -186,7 +189,7 @@ public class RoundActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     AlertDialog.Builder sideSelector = new AlertDialog.Builder(RoundActivity.this);
-                    sideSelector.setMessage("Setect a side to play: ")
+                    sideSelector.setMessage("Select a side to play: ")
                             .setPositiveButton("RIGHT", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -226,6 +229,29 @@ public class RoundActivity extends Activity {
         refreshLayout();
         if (normalizeResult != null)
             Toast.makeText(RoundActivity.this, normalizeResult, Toast.LENGTH_LONG).show();
+    }
+
+    private void askToSave() {
+        AlertDialog.Builder saveAlert = new AlertDialog.Builder(RoundActivity.this);
+        saveAlert.setMessage("Do you want to save and quit?: ")
+                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.v("serialize", round.serialize());
+                        Intent output = new Intent();
+                        setResult(RESULT_CANCELED, output);
+                        finish();
+                        return;
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+        saveAlert.show();
     }
 }
 

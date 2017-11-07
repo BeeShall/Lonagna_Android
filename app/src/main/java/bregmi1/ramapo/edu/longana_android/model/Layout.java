@@ -111,4 +111,19 @@ public class Layout implements Serializable {
         return null;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Layout:\nL ");
+        for (int i = left.size(); i > 0; --i) {
+            builder.append(left.elementAt(i).toString()).append(" ");
+        }
+        builder.append(engine.toString()).append(" ");
+        for (Domino d : right) {
+            builder.append(d.toString()).append(" ");
+        }
+        builder.append("R");
+        return builder.toString();
+
+    }
 }

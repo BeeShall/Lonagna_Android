@@ -56,13 +56,21 @@ public class Hand implements Serializable {
         return hand.isEmpty();
     }
 
-
-
     public int getHandSum(){
         int total = 0;
         for(Domino d: hand){
             total+= d.getSum();
         }
         return  total;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Hand: ");
+        for (Domino d : hand) {
+            builder.append(d.toString()).append(" ");
+        }
+        return builder.toString();
     }
 }

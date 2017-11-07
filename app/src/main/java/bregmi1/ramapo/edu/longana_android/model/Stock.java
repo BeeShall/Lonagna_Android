@@ -60,4 +60,13 @@ public class Stock implements Serializable {
         return temp;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Boneyard:\n");
+        for (Domino d : stock) {
+            builder.append(d.toString()).append(" ");
+        }
+        return builder.toString();
+    }
 }

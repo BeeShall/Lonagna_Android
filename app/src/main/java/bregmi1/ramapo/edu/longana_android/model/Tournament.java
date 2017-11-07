@@ -1,6 +1,9 @@
 package bregmi1.ramapo.edu.longana_android.model;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -91,6 +94,17 @@ public class Tournament {
             e.printStackTrace();
         }
         return currentRound;
+    }
+
+    public boolean serialize(File file) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Tournament Score: ").append(tournamentScore).append("\n")
+                .append("Round Count: ").append(roundCount).append("\n\n")
+                .append(currentRound.toString());
+
+        Log.v("serialize", builder.toString());
+
+        return true;
     }
 
 

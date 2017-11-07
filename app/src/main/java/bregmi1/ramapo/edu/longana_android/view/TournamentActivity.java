@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -88,6 +90,7 @@ public class TournamentActivity extends Activity {
                                 //ask for the tournament score
                                 AlertDialog.Builder scoreAlert = new AlertDialog.Builder(TournamentActivity.this);
                                 final EditText scoreText = new EditText(TournamentActivity.this);
+                                scoreText.setInputType(InputType.TYPE_CLASS_NUMBER);
                                 scoreAlert.setTitle("Please enter a tournament score:")
                                         .setView(scoreText)
                                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -116,6 +119,13 @@ public class TournamentActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //if save and quit
+        Log.v("resultCode", "" + resultCode + "  " + RESULT_CANCELED);
+        if (resultCode == RESULT_CANCELED) {
+            Toast.makeText(TournamentActivity.this, "The game has been saved. GoodBye!", Toast.LENGTH_SHORT);
+            finish();
+            return;
+        }
         if (tournament.checkIfTournamentEnded()) {
             AlertDialog.Builder messages = new AlertDialog.Builder(this);
             messages.setMessage("Tournament Ended!\n" + tournament.getWinnerAndScores())

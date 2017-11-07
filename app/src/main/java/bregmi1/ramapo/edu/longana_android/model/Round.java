@@ -318,6 +318,35 @@ public class Round implements Serializable {
         return dominos;
     }
 
+    public String serialize() {
+        StringBuilder serializedRound = new StringBuilder();
+        serializedRound.append("Computer: \n");
+        serializedRound.append("\t").append(computer.getserializedHand()).append("\n");
+        serializedRound.append("\tScore: ").append(computer.getScore()).append("\n\n");
+
+        serializedRound.append("Human: \n");
+        serializedRound.append("\t").append(human.getserializedHand()).append("\n");
+        serializedRound.append("\tScore: ").append(human.getScore()).append("\n\n");
+
+        serializedRound.append(layout.toString()).append("\n\n");
+
+        serializedRound.append(stock.toString()).append("\n\n");
+
+        if (layout.isEngineSet()) {
+
+            serializedRound.append("Previous Player Passed: ").append((playerPassed) ? "Yes" : "No").append("\n\n");
+
+            serializedRound.append("Next Player: ").append((computerTurn) ? "Computer" : "Human").append("\n");
+        } else {
+            serializedRound.append("Previous Player Passed: ").append("\n\n");
+
+            serializedRound.append("Next Player: ").append("\n");
+        }
+
+
+        return serializedRound.toString();
+    }
+
 
 
 }

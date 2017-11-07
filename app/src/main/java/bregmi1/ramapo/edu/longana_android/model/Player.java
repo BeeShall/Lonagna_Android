@@ -63,11 +63,15 @@ class Player implements Serializable {
     }
 
     boolean isHandEmpty() {
-        return hand.isEmpty();
+        return hand == null || hand.isEmpty();
     }
 
     public int getHandSum() {
         return hand.getHandSum();
+    }
+
+    public String getserializedHand() {
+        return hand.toString();
     }
 
     boolean hasValidMove(Layout layout, boolean playerPassed) {
