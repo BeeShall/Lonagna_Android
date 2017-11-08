@@ -122,9 +122,12 @@ public class TournamentActivity extends Activity {
         //if save and quit
         Log.v("resultCode", "" + resultCode + "  " + RESULT_CANCELED);
         if (resultCode == RESULT_CANCELED) {
-            Toast.makeText(TournamentActivity.this, "The game has been saved. GoodBye!", Toast.LENGTH_SHORT);
-            finish();
-            return;
+            String filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/longana.txt";
+            if (tournament.serialize(new File(filePath))) {
+                Toast.makeText(TournamentActivity.this, "The game has been saved. GoodBye!", Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
         }
         if (tournament.checkIfTournamentEnded()) {
             AlertDialog.Builder messages = new AlertDialog.Builder(this);

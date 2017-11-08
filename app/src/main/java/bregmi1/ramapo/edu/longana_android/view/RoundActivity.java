@@ -32,7 +32,6 @@ public class RoundActivity extends Activity {
 
         Intent intent = getIntent();
         round = (Round) intent.getSerializableExtra("round");
-
         TextView tournamentScore = (TextView) findViewById(R.id.tournamentScore);
         tournamentScore.setText(intent.getSerializableExtra("tournamentScore").toString());
 
@@ -45,9 +44,12 @@ public class RoundActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (round.humanPass()) {
-                    normalizePlayTurn();
-                    //normalize the turn
-                    askToSave();
+                    askToSave().setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            normalizePlayTurn();
+                        }
+                    }).show();
                 } else {
                     Toast.makeText(RoundActivity.this, "You can't pass yet! \nYou might have a valid move in your hand or you might be able to draw from stock!", Toast.LENGTH_SHORT).show();
                 }
@@ -82,31 +84,34 @@ public class RoundActivity extends Activity {
         });
 
         round.init();
-        askToSave();
-        String firstPlayerLogic = round.determineFirstPlayer();
-        if (firstPlayerLogic != null) {
-            AlertDialog.Builder messages = new AlertDialog.Builder(this);
-            messages.setMessage(firstPlayerLogic)
-                    .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            normalizePlayTurn();
-                        }
-                    });
-            //save and quit, normalize the firstPlayer
-            messages.show();
-        } else {
-            normalizePlayTurn();
-        }
+        refreshLayout();
+        askToSave().setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String firstPlayerLogic = round.determineFirstPlayer();
+                if (firstPlayerLogic != null) {
+                    refreshLayout();
+                    AlertDialog.Builder messages = new AlertDialog.Builder(RoundActivity.this);
+                    messages.setMessage(firstPlayerLogic)
+                            .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    normalizePlayTurn();
+                                }
+                            });
+                    //save and quit, normalize the firstPlayer
+                    messages.show();
+                } else {
+                    normalizePlayTurn();
+                }
+            }
+        }).show();
 
         TextView humanScore = (TextView) findViewById(R.id.humanScore);
         humanScore.setText(String.format("%d", round.getPlayerScore(Human.class)));
 
         TextView computerScore = (TextView) findViewById(R.id.computerScore);
         computerScore.setText(String.format("%d", round.getPlayerScore(Computer.class)));
-
-        refreshLayout();
-
     }
 
     @Override
@@ -152,9 +157,6 @@ public class RoundActivity extends Activity {
 
         computerHandLayout.removeAllViews();
         addButtonsToLayout(computerHand, computerHandLayout, false);
-
-        askToSave();
-
     }
 
     private void addDominosToGameLayout(Vector<Domino> dominoes, GridLayout layout) {
@@ -193,13 +195,28 @@ public class RoundActivity extends Activity {
                             .setPositiveButton("RIGHT", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    if (playRound(domino, Side.RIGHT)) normalizePlayTurn();
+                                    if (playRound(domino, Side.RIGHT)) {
+                                        askToSave().setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                normalizePlayTurn();
+                                            }
+                                        }).show();
+
+                                    }
                                 }
                             })
                             .setNegativeButton("LEFT", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    if (playRound(domino, Side.LEFT)) normalizePlayTurn();
+                                    if (playRound(domino, Side.LEFT)) {
+                                        askToSave().setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                normalizePlayTurn();
+                                            }
+                                        }).show();
+                                    }
                                 }
                             });
                     sideSelector.show();
@@ -226,12 +243,14 @@ public class RoundActivity extends Activity {
 
     private void normalizePlayTurn() {
         String normalizeResult = round.normalizeTurn();
-        refreshLayout();
-        if (normalizeResult != null)
+        if (normalizeResult != null) {
+            refreshLayout();
             Toast.makeText(RoundActivity.this, normalizeResult, Toast.LENGTH_LONG).show();
+            askToSave().show();
+        }
     }
 
-    private void askToSave() {
+    private AlertDialog.Builder askToSave() {
         AlertDialog.Builder saveAlert = new AlertDialog.Builder(RoundActivity.this);
         saveAlert.setMessage("Do you want to save and quit?: ")
                 .setPositiveButton("YES", new DialogInterface.OnClickListener() {
@@ -241,17 +260,9 @@ public class RoundActivity extends Activity {
                         Intent output = new Intent();
                         setResult(RESULT_CANCELED, output);
                         finish();
-                        return;
                     }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-
-        saveAlert.show();
+                }).setNegativeButton("NO", null);
+        return saveAlert;
     }
 }
 

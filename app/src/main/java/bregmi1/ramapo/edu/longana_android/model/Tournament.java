@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -99,12 +100,20 @@ public class Tournament {
     public boolean serialize(File file) {
         StringBuilder builder = new StringBuilder();
         builder.append("Tournament Score: ").append(tournamentScore).append("\n")
-                .append("Round Count: ").append(roundCount).append("\n\n")
-                .append(currentRound.toString());
+                .append("Round Count: ").append(roundCount - 1).append("\n\n")
+                .append(currentRound.serialize());
 
         Log.v("serialize", builder.toString());
 
-        return true;
+        try {
+            FileOutputStream os = new FileOutputStream(file);
+            os.write(builder.toString().getBytes());
+            os.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 

@@ -115,7 +115,7 @@ public class Layout implements Serializable {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("Layout:\nL ");
-        for (int i = left.size(); i > 0; --i) {
+        for (int i = left.size() - 1; i >= 0; --i) {
             builder.append(left.elementAt(i).toString()).append(" ");
         }
         builder.append(engine.toString()).append(" ");
