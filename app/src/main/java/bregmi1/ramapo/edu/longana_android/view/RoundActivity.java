@@ -130,6 +130,8 @@ public class RoundActivity extends Activity {
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            Intent output = new Intent();
+                            setResult(RESULT_OK, output);
                             finish();
                         }
                     });

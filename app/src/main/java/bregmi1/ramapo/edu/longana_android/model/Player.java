@@ -211,8 +211,11 @@ class Player implements Serializable {
             }
         });
 
-        if (move.getDomino().equals(moves.firstElement().getDomino()))
-            bestScore = moves.get(1).getDomino().getSum();
+        if (move.getDomino().equals(moves.firstElement().getDomino())) {
+            if (moves.size() > 2) {
+                bestScore = moves.get(1).getDomino().getSum();
+            } else return 0;
+        }
         else bestScore = moves.firstElement().getDomino().getSum();
 
         layout.undo(move.getSide());

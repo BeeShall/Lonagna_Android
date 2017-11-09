@@ -15,15 +15,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal|center_vertical"
-            android:text="Welcome to Longana!" />
+            android:text="Welcome to Longana!"
+            android:textSize="40dp" />
 
-        <Button
-            android:id="@+id/startButton"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/welcomeText"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="Start" />
+            android:gravity="center_horizontal|center_vertical">
+
+            <Button
+                android:id="@+id/startButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start" />
+
+        </LinearLayout>
+
+
     </RelativeLayout>
 
 </LinearLayout>
