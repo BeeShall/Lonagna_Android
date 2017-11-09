@@ -97,11 +97,11 @@ public class Tournament {
         return currentRound;
     }
 
-    public boolean serialize(File file) {
+    public boolean serialize(File file, String data) {
         StringBuilder builder = new StringBuilder();
         builder.append("Tournament Score: ").append(tournamentScore).append("\n")
                 .append("Round Count: ").append(roundCount - 1).append("\n\n")
-                .append(currentRound.serialize());
+                .append(data);
 
         Log.v("serialize", builder.toString());
 

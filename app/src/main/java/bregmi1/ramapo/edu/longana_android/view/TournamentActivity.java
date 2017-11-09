@@ -50,7 +50,6 @@ public class TournamentActivity extends Activity {
                                 AlertDialog.Builder alert = new AlertDialog.Builder(TournamentActivity.this);
                                 alert.setTitle("Select a game");
 
-                                Log.v("Directory", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
                                 final File[] files = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).listFiles(new FilenameFilter() {
                                     @Override
                                     public boolean accept(File dir, String name) {
@@ -72,7 +71,7 @@ public class TournamentActivity extends Activity {
                                         String fileName = (String) lw.getAdapter().getItem(which);
 
                                         //de-serialize and create round;
-                                        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + fileName;
+                                        String filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + fileName;
                                         try {
                                             InputStream is = new FileInputStream(filePath);
                                             startRoundActivity(tournament.load(is));
@@ -123,7 +122,7 @@ public class TournamentActivity extends Activity {
         Log.v("resultCode", "" + resultCode + "  " + RESULT_CANCELED);
         if (resultCode == RESULT_CANCELED) {
             String filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/longana.txt";
-            if (tournament.serialize(new File(filePath))) {
+            if (tournament.serialize(new File(filePath), data.getStringExtra("round"))) {
                 Toast.makeText(TournamentActivity.this, "The game has been saved. GoodBye!", Toast.LENGTH_SHORT).show();
                 finish();
                 return;

@@ -258,6 +258,7 @@ public class RoundActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         Log.v("serialize", round.serialize());
                         Intent output = new Intent();
+                        output.putExtra("round", round.serialize());
                         setResult(RESULT_CANCELED, output);
                         finish();
                     }
