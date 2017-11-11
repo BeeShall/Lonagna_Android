@@ -3,12 +3,19 @@ package bregmi1.ramapo.edu.longana_android.view;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +36,7 @@ public class RoundActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_round);
+
 
         Intent intent = getIntent();
         round = (Round) intent.getSerializableExtra("round");
@@ -171,6 +179,7 @@ public class RoundActivity extends Activity {
             GridLayout.Spec gridRow = GridLayout.spec(row, 1);
             GridLayout.Spec gridCol = GridLayout.spec(col, 1);
             gridLayoutParam = new GridLayout.LayoutParams(gridRow, gridCol);
+            gridLayoutParam.setMargins(4, 0, 4, 0);
             layout.addView(getDominoButton(dominoes.get(i), false), gridLayoutParam);
         }
     }
@@ -179,14 +188,16 @@ public class RoundActivity extends Activity {
         GridLayout.LayoutParams gridLayoutParam;
         for (int i = 0; i < dominoes.size(); i++) {
             gridLayoutParam = new GridLayout.LayoutParams(GridLayout.spec(0), GridLayout.spec(i));
+            gridLayoutParam.setMargins(4, 0, 4, 0);
             layout.addView(getDominoButton(dominoes.get(i), buttonsEnabled), gridLayoutParam);
         }
     }
 
-    private Button getDominoButton(final Domino domino, boolean buttonsEnabled) {
-        Button button = new Button(this);
-        button.setEnabled(buttonsEnabled);
+    private ImageButton getDominoButton(final Domino domino, boolean buttonsEnabled) {
+        ImageButton button = new ImageButton(this);
 
+
+        button.setLayoutParams(new ViewGroup.LayoutParams(1, 2));
         if (buttonsEnabled) {
             //eventListenerForButton
             button.setOnClickListener(new View.OnClickListener() {
@@ -226,8 +237,12 @@ public class RoundActivity extends Activity {
             });
         }
 
-        if (domino.isDouble()) button.setText(domino.getPip1() + "\n|\n" + domino.getPip2());
-        else button.setText(domino.toString());
+        if (domino.isDouble() || (domino.getPip1() < domino.getPip2())) {
+            button.setBackground(getDominoDrawable(Integer.toString(domino.getPip1()) + Integer.toString(domino.getPip2()), false));
+        } else {
+            button.setBackground(getDominoDrawable(Integer.toString(domino.getPip2()) + Integer.toString(domino.getPip1()), true));
+        }
+
         return button;
 
     }
@@ -266,6 +281,18 @@ public class RoundActivity extends Activity {
                     }
                 }).setNegativeButton("NO", null);
         return saveAlert;
+    }
+
+    private Drawable getDominoDrawable(String pip, boolean flip) {
+        Log.v("drawablei", "d" + pip);
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), this.getResources().getIdentifier("d" + pip, "drawable", getPackageName()));
+        bmp = bmp.copy(Bitmap.Config.ARGB_8888, true);
+        Matrix matrix = new Matrix();
+        if (flip) matrix.postRotate(180);
+        matrix.postScale(0.25f, 0.25f);
+        //Drawable d = this.getResources().getDrawable( this.getResources().getIdentifier("d"+pip,"drawable",getPackageName()));
+        return new BitmapDrawable(this.getResources(), Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true));
+
     }
 }
 
