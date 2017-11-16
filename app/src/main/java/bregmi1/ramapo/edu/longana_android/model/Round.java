@@ -13,20 +13,38 @@ import java.util.Vector;
 
 //implementing as serializable so that it can be passed from TournamentActivity to RoundActivity
 public class Round implements Serializable {
+    //maximum number of pip that can appear
     private final int MAX_PIP = 6;
+    //boneyard for the round
     private Stock stock;
+    //human player for the round
     private Human human;
+    //computer player for the round
     private Computer computer;
+    //layout for the round
     private Layout layout;
+    //indicates if previous player passed
     private boolean playerPassed;
+    //to count the number of consecutive passes
     private int passCount;
 
+    //to track if its computer's turn
     private boolean computerTurn;
 
+    /**
+     * Default constructor for Round class
+     */
     public Round(){
         this(null,null, -1);
     }
 
+    /**
+     * Constructor for Round class
+     *
+     * @param human     human player for the round
+     * @param computer  computer player for the round
+     * @param enginePip engine for the round (indicating the pip)
+     */
     public Round(Human human, Computer computer, int enginePip){
         stock = new Stock(MAX_PIP);
         this.human = human;
@@ -36,28 +54,53 @@ public class Round implements Serializable {
         playerPassed = false;
     }
 
+    /**
+     * Getter for Layout
+     *
+     * @return copy of the layout vector
+     */
     public Vector<Domino> getLayout() {
         return layout.getLayout();
     }
 
+    /**
+     * Getter for Stock
+     * @return copy of the stock vector
+     */
     public Vector<Domino> getStock() {
         return stock.getStock();
     }
 
+    /**
+     * Getter for the human hand
+     * @return copy of the human hand vector
+     */
     public Vector<Domino> getHumanHand() {
         return human.getHand();
     }
 
+    /**
+     * Getter for the computer hand
+     * @return copy of the computer hand vector
+     */
     public Vector<Domino> getComputerHand() {
         return computer.getHand();
     }
 
+    /**
+     * To get the score for the given player
+     * @param player Class for the player to get the score for
+     * @return score for the player
+     */
     public int getPlayerScore(Class player) {
         if (player == Computer.class) return computer.getScore();
         else if (player == Human.class) return human.getScore();
         return -1;
     }
 
+    /**
+     * Initializes the round
+     */
     public void init(){
         if (human.isHandEmpty()) {
             //brand new game
@@ -67,10 +110,18 @@ public class Round implements Serializable {
         }
     }
 
-    public String determineFirstPlayer(){
+    /**
+     * To determine the first player
+     *
+     * @return string representing the steps involved in determining the first player
+     */
+    public String determineFirstPlayer() {
+        //if the engine has already been set, the first player has already been determined
         if (layout.isEngineSet()) return null;
         StringBuilder displayLog = new StringBuilder();
         Domino engine = layout.getEngine();
+
+        //both player draw the domino until one of them has the engine
         while(!playerHasEngine(engine, displayLog)){
             Domino domino = stock.drawDomino();
             human.drawDomino(domino);
@@ -82,25 +133,38 @@ public class Round implements Serializable {
             Log.v("Round: ","Computer drew"+domino.toString());
             displayLog.append("Computer drew ").append(domino.toString()).append("\n");
         }
+        //reset the drawn for both the players because, this doesn't involve with the passing rules
         human.unsetDominoDrawn();
         computer.unsetDominoDrawn();
         layout.setEngine();
         return displayLog.toString();
     }
 
+    /**
+     * To check any of the players have the engine
+     * @param engine the engine of the game to look for
+     * @param displayLog to keep tract of the steps involved
+     * @return true if any of the players have it, false if not
+     */
     private boolean playerHasEngine(Domino engine, StringBuilder displayLog){
         int dominoIndex;
+        //if human has the engine
         if((dominoIndex = human.hasDominoInHand(engine)) >= 0){
             Log.v("Round: ", "Human has the engine!");
             displayLog.append("Human has the Engine! \n");
+
+            //human plays the domino and computer's turn is next
             human.playDomino(dominoIndex, layout, Side.ANY);
             displayLog.append("Human placed the engine! \n");
             computerTurn = true;
             return true;
         }
+        //if computer has the engine
         else if((dominoIndex =computer.hasDominoInHand(engine)) >= 0){
             Log.v("Round: ", "Computer has the engine!");
             displayLog.append("Computer has the Engine! \n");
+
+            //computer plays the domino and human's turn is next
             computer.playDomino(dominoIndex, layout, Side.ANY);
             displayLog.append("It's human's turn!");
             computerTurn = false;
@@ -109,6 +173,10 @@ public class Round implements Serializable {
         return false;
     }
 
+    /**\
+     * To normalize the turn such that next player is human
+     * @return string representing strategy involve in normalizing turn
+     */
     public String normalizeTurn() {
         if (computerTurn) {
             computerTurn = false;
@@ -117,8 +185,14 @@ public class Round implements Serializable {
         return null;
     }
 
-
-    public String play( Domino domino, Side side){
+    /**
+     * To play the non-computer i.e. human move
+     *
+     * @param domino domino to play
+     * @param side   side to play
+     * @return string representing steps involved in making the move
+     */
+    public String play(Domino domino, Side side){
         //humanMove
         if (!human.play(human.hasDominoInHand(domino), layout, side, playerPassed))
             return "Invalid move!";
@@ -129,6 +203,10 @@ public class Round implements Serializable {
         //return null;
     }
 
+    /**
+     * Passes the turn for human player
+     * @return true if pass was possible, false if not
+     */
     public boolean humanPass() {
         if (human.hasValidMove(layout, playerPassed)) return false;
         if (!human.hasAlreadyDrawn()) return false;
@@ -138,6 +216,10 @@ public class Round implements Serializable {
         return true;
     }
 
+    /**
+     * Draws a domino for the human
+     * @return Domino that was drawn , null if not
+     */
     public Domino humanDraw() {
         if (human.hasValidMove(layout, playerPassed)) return null;
         if (human.hasAlreadyDrawn()) return null;
@@ -148,6 +230,10 @@ public class Round implements Serializable {
         return domino;
     }
 
+    /**
+     * To get hint for the current game state
+     * @return string representing the hint move with the strategy
+     */
     public String getHint() {
         Move hint = human.getHint(layout, playerPassed);
         if (hint == null) return null;
@@ -156,7 +242,10 @@ public class Round implements Serializable {
 
     }
 
-
+    /**
+     * To make the computer move
+     * @return String representing the steps involved in playing the computer move
+     */
     private String playComputerMove(){
         if (!computer.play(layout, playerPassed)) {
             StringBuilder compMove = new StringBuilder();
@@ -186,20 +275,34 @@ public class Round implements Serializable {
         return computer.getMoveStrategy();
     }
 
+    /**
+     * To pass the player turn
+     */
     private void passPlayer() {
         playerPassed = true;
         passCount++;
     }
 
+    /**
+     * To reset the player pass
+     */
     private void resetPass() {
         playerPassed = false;
         passCount = 0;
     }
 
+    /**
+     * To check if the round has ended
+     * @return true is round ended, else false
+     */
     public boolean hasRoundEnded() {
         return (human.isHandEmpty() || computer.isHandEmpty()) || (passCount > 2);
     }
 
+    /**
+     * To find the round winner and update the scores
+     * @return String including the round winner and respective player scores
+     */
     public String getRoundWinnerAndScore() {
         StringBuilder scores = new StringBuilder();
         //holds sum of all tiles for human
@@ -242,6 +345,10 @@ public class Round implements Serializable {
         return scores.append(" won this round with a score of ").append(score).toString();
     }
 
+    /**
+     * To load round from a saved state
+     * @param reader inputstream to read the game from
+     */
     public void load(BufferedReader reader) {
 
         try {
@@ -306,6 +413,11 @@ public class Round implements Serializable {
 
     }
 
+    /**
+     * To translate the string representation of dominos to a vector of Domino Objects
+     * @param dominoString string representing the dominos
+     * @return vector of parsed dominoes
+     */
     private Vector<Domino> getDominosFromString(String dominoString) {
         Log.v("dominostring", dominoString);
         if (dominoString.trim().equals("")) return new Vector<>();
@@ -318,6 +430,10 @@ public class Round implements Serializable {
         return dominos;
     }
 
+    /**
+     * To serialize the round state to a string
+     * @return String representing the serialized round
+     */
     public String serialize() {
         StringBuilder serializedRound = new StringBuilder();
         serializedRound.append("Computer: \n");
