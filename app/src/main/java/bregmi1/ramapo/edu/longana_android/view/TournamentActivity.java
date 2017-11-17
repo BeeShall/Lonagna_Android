@@ -120,6 +120,8 @@ public class TournamentActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //if save and quit
         Log.v("resultCode", "" + resultCode + "  " + RESULT_CANCELED);
+
+        //if result code is canceled then the user wants to save and quit
         if (resultCode == RESULT_CANCELED) {
             String filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/longana.txt";
             if (tournament.serialize(new File(filePath), data.getStringExtra("round"))) {

@@ -39,6 +39,8 @@ public class RoundActivity extends Activity {
 
 
         Intent intent = getIntent();
+
+        //fetching the round passed from the tournament activity
         round = (Round) intent.getSerializableExtra("round");
         TextView tournamentScore = (TextView) findViewById(R.id.tournamentScore);
         tournamentScore.setText(intent.getSerializableExtra("tournamentScore").toString());
@@ -55,6 +57,7 @@ public class RoundActivity extends Activity {
                     askToSave().setNegativeButton("No", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            //if human doesn't want to save, normalize the turn such that next player is human
                             normalizePlayTurn();
                         }
                     }).show();
@@ -64,11 +67,13 @@ public class RoundActivity extends Activity {
             }
         });
 
+        //draw from boneyard
         final Button drawButton = (Button) findViewById(R.id.drawButton);
         drawButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Domino drawnDomino = round.humanDraw();
+                //draw from stock and update the view
                 if (drawnDomino != null) {
                     Toast.makeText(RoundActivity.this, "You drew " + drawnDomino.toString(), Toast.LENGTH_SHORT).show();
                     refreshLayout();
@@ -127,6 +132,9 @@ public class RoundActivity extends Activity {
 
     }
 
+    /**
+     * refreshes the view by redrawing all the buttons
+     */
     private void refreshLayout() {
         //check for round end here
         if (round.hasRoundEnded()) {
@@ -169,6 +177,12 @@ public class RoundActivity extends Activity {
         addButtonsToLayout(computerHand, computerHandLayout, false);
     }
 
+    /**
+     * To add the imagebuttons to for the respective dominoes to the layout
+     *
+     * @param dominoes dominoes to add
+     * @param layout   layout to add the dominoes in
+     */
     private void addDominosToGameLayout(Vector<Domino> dominoes, GridLayout layout) {
         GridLayout.LayoutParams gridLayoutParam;
 
@@ -184,6 +198,12 @@ public class RoundActivity extends Activity {
         }
     }
 
+    /**
+     * To add buttons for respective dominoes to the given gridlayout
+     * @param dominoes dominoes to add the buttons for
+     * @param layout layout to add the buttons in
+     * @param buttonsEnabled indicates whether the button should be enabled
+     */
     private void addButtonsToLayout(Vector<Domino> dominoes, GridLayout layout, boolean buttonsEnabled) {
         GridLayout.LayoutParams gridLayoutParam;
         for (int i = 0; i < dominoes.size(); i++) {
@@ -193,6 +213,12 @@ public class RoundActivity extends Activity {
         }
     }
 
+    /**
+     * to generate image button for respective domino
+     * @param domino domino to generate image button for
+     * @param buttonsEnabled whether the button should be active or not
+     * @return ImageButton for respective domino
+     */
     private ImageButton getDominoButton(final Domino domino, boolean buttonsEnabled) {
         ImageButton button = new ImageButton(this);
 
@@ -247,6 +273,12 @@ public class RoundActivity extends Activity {
 
     }
 
+    /**
+     * Plays the move and updates the view
+     * @param domino domino to play
+     * @param side side to play
+     * @return true if move was possible, false if not
+     */
     private boolean playRound(Domino domino, Side side) {
         String message = round.play(domino, side);
         if (message != null) {
@@ -258,6 +290,9 @@ public class RoundActivity extends Activity {
         return true;
     }
 
+    /**
+     * normalized the player turn such that next player is human
+     */
     private void normalizePlayTurn() {
         String normalizeResult = round.normalizeTurn();
         if (normalizeResult != null) {
@@ -267,6 +302,10 @@ public class RoundActivity extends Activity {
         }
     }
 
+    /**
+     * Create a alert for aaking to save
+     * @return alert
+     */
     private AlertDialog.Builder askToSave() {
         AlertDialog.Builder saveAlert = new AlertDialog.Builder(RoundActivity.this);
         saveAlert.setMessage("Do you want to save and quit?: ")
@@ -283,6 +322,12 @@ public class RoundActivity extends Activity {
         return saveAlert;
     }
 
+    /**
+     * To get the background for the respective domino buttons
+     * @param pip pip to find the domino image for
+     * @param flip indicates whether the domino should be flipped or not
+     * @return Drawable for the background of Image Button
+     */
     private Drawable getDominoDrawable(String pip, boolean flip) {
         Log.v("drawablei", "d" + pip);
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), this.getResources().getIdentifier("d" + pip, "drawable", getPackageName()));
