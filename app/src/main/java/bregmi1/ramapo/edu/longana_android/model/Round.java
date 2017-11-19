@@ -49,6 +49,8 @@ public class Round implements Serializable {
         stock = new Stock(MAX_PIP);
         this.human = human;
         this.computer = computer;
+        human.clearHand();
+        computer.clearHand();
         this.layout = new Layout(new Domino(enginePip,enginePip));
         passCount = 0;
         playerPassed = false;
@@ -224,7 +226,10 @@ public class Round implements Serializable {
         if (human.hasValidMove(layout, playerPassed)) return null;
         if (human.hasAlreadyDrawn()) return null;
         Log.v("Player drew", "" + human.hasAlreadyDrawn());
-        if (stock.isEmpty()) return null;
+        if (stock.isEmpty()) {
+            human.setDominoDrawn();
+            return null;
+        }
         Domino domino = stock.drawDomino();
         human.drawDomino(domino);
         return domino;

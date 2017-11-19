@@ -119,6 +119,11 @@ public class Tournament {
         }
     }
 
+    public void setPlayerScore(Class player, int score){
+        if(player == Human.class) human.setScore(score);
+        else computer.setScore(score);
+    }
+
     /**
      * To load a round from inputstream
      * @param is InputStream to load the round from

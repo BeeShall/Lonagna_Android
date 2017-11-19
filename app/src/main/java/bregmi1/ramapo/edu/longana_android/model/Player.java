@@ -167,6 +167,10 @@ class Player implements Serializable {
         hand.add(domino);
     }
 
+    void clearHand(){
+        hand=null;
+    }
+
     /**
      * To check if the domino exists in hand
      * @param domino domino to loolk for

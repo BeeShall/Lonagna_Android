@@ -21,6 +21,8 @@ import java.io.FilenameFilter;
 import java.io.InputStream;
 
 import bregmi1.ramapo.edu.longana_android.R;
+import bregmi1.ramapo.edu.longana_android.model.Computer;
+import bregmi1.ramapo.edu.longana_android.model.Human;
 import bregmi1.ramapo.edu.longana_android.model.Round;
 import bregmi1.ramapo.edu.longana_android.model.Tournament;
 
@@ -130,6 +132,16 @@ public class TournamentActivity extends Activity {
                 return;
             }
         }
+
+        int humanScore = data.getIntExtra("humanScore", 0);
+        int computerScore = data.getIntExtra("computerScore", 0);
+
+        Log.v("humanScore", ""+humanScore);
+        Log.v("computerScore",""+computerScore);
+
+        tournament.setPlayerScore(Human.class, humanScore);
+        tournament.setPlayerScore(Computer.class, computerScore);
+
         if (tournament.checkIfTournamentEnded()) {
             AlertDialog.Builder messages = new AlertDialog.Builder(this);
             messages.setMessage("Tournament Ended!\n" + tournament.getWinnerAndScores())

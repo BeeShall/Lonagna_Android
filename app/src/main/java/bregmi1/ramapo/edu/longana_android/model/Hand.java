@@ -50,7 +50,7 @@ public class Hand implements Serializable {
      * @return copy of the Hand vector
      */
     public Vector<Domino> getHand() {
-        return (Vector<Domino>) hand.clone();
+        return hand;
     }
 
     /**

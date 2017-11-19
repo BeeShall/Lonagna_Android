@@ -62,7 +62,7 @@ public class RoundActivity extends Activity {
                         }
                     }).show();
                 } else {
-                    Toast.makeText(RoundActivity.this, "You can't pass yet! \nYou might have a valid move in your hand or you might be able to draw from stock!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RoundActivity.this, "You can't pass yet! \nYou might have a valid move in your hand or you might be able to draw from stock! If stock is empty, you'll have to pass!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -147,6 +147,8 @@ public class RoundActivity extends Activity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Intent output = new Intent();
+                            output.putExtra("humanScore",round.getPlayerScore(Human.class));
+                            output.putExtra("computerScore",round.getPlayerScore(Computer.class));
                             setResult(RESULT_OK, output);
                             finish();
                         }
